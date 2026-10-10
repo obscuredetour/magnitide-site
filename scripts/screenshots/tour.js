@@ -2,7 +2,7 @@
 // copied to crates/app/ui/dev-hook.js (with __DEMO__ replaced by the demo
 // library's path) and loaded by `cargo tauri dev`'s page. It opens the demo
 // library, shows each view for HOLD ms in Light and then Dark (grid, list,
-// details, browse, edit, settings), and puts
+// details, browse, edit, settings, plugins), and puts
 // everything back: the library, and every setting it touched (it restores
 // localStorage as it found it). A magenta slate fills the window at the start
 // and the end, so the capture knows which frames are the tour's.
@@ -14,6 +14,73 @@ const DEMO = '__DEMO__';
 const HOLD = 3500;
 const KEY = 'screenshotTourSaved';
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// What Settings › Plugins shows: Magnitide's two metadata sources (plugins/ in
+// the app repo) and two calibre plugins from the test corpus, as their own
+// manifests describe them, running in Estuary. Not read from this computer.
+const ESTUARY = 'magnitide-estuary-3-aarch64-apple-darwin.tar.zst';
+const native = (name, description) => ({
+  manifest: {
+    name,
+    version: '0.1.0',
+    author: 'Magnitide',
+    description,
+    api: '0.1',
+    kind: 'metadata-source',
+    capabilities: ['network'],
+    component: 'plugin.wasm',
+  },
+  slug: name.toLowerCase(),
+  enabled: true,
+  handles: { fileTypes: [], reads: [], writes: [], menu: [] },
+});
+const calibre = (name, version, author, description, file) => ({
+  name,
+  version,
+  author,
+  description,
+  kind: 'interfaceAction',
+  file,
+  enabled: true,
+  capabilities: [],
+  minimumCalibreVersion: '5.0.0',
+  hooks: null,
+  customizable: true,
+  coverage: [],
+});
+const PLUGINS = {
+  hosts: {
+    hostChoice: 'estuary',
+    host: 'estuary',
+    hostProblem: null,
+    calibre: null,
+    calibreDownload: { version: '9.15.0', available: true, installed: false, installing: false, path: null, size: null, downloadSize: null },
+    installed: true,
+    installing: false,
+    available: true,
+    version: '3',
+    python: '3.14.8',
+    qt: '6.11.2',
+    compat: '9.15',
+    path: '~/Library/Application Support/com.magnitide.app/plugin-hosts/estuary/3',
+    size: 155897671,
+    downloadSize: null,
+    downloadFile: ESTUARY,
+    downloadUrl: `https://github.com/obscuredetour/magnitide/releases/download/estuary-v3/${ESTUARY}`,
+    problem: null,
+  },
+  plugins: [
+    calibre('Reading List', '1.15.9', 'Grant Drake', 'Define orderable lists of books and synchronise to devices/folders', 'reading_list-1.15.9.zip'),
+    calibre('FanFicFare', '4.62.0', 'Jim Miller', 'UI plugin to download FanFiction stories from various sites.', 'FanFicFarePlugin-v4.62.0.zip'),
+  ],
+  outputFormat: 'EPUB',
+  errors: {},
+  native: [
+    native('Goodreads', 'Looks books up on Goodreads: title, authors, publisher, date, ISBN, genres as tags, description and cover'),
+    native('Open Library (plugin)', 'Looks books up on Open Library: the example metadata-source plugin'),
+  ],
+  nativeErrors: {},
+};
 
 (async () => {
   if (sessionStorage.getItem('screenshotTourDone')) return;
@@ -132,6 +199,15 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
     await wait(300);
     unfocus();
     await wait(HOLD);
+
+    // Settings › Plugins, with PLUGINS standing in for what's installed here.
+    const pluginsStatus = api.pluginsStatus;
+    api.pluginsStatus = async () => PLUGINS;
+    await settings('Plugins');
+    await wait(500);
+    unfocus();
+    await wait(HOLD);
+    api.pluginsStatus = pluginsStatus;
     closeSettings();
   }
 

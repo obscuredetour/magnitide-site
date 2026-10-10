@@ -19,15 +19,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      # The app repo supplies the theme CSS and the icon. While it is private
-      # this needs APP_REPO_TOKEN (a fine-grained PAT, Contents: read, on
-      # obscuredetour/magnitide); once it is public, drop the token line.
+      # The app repo supplies the theme CSS and the icon.
       - uses: actions/checkout@v4
         with:
           repository: obscuredetour/magnitide
           ref: main
           path: app
-          token: ${{ secrets.APP_REPO_TOKEN || github.token }}
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:

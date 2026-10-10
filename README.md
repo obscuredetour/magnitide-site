@@ -25,6 +25,7 @@ src/components/                the pieces pages are made of: Section, Card, Fact
                                Screenshots, Downloads, ThemeMenu, Nav, Footer, Icon
 src/styles/global.css          Tailwind, the app's themes, and the few base styles
 src/themes.ts                  the app's themes and their accents, for the theme menu
+src/appIcon.ts                 the app icon, light and dark, from the app's Icon Composer file (nav, favicon)
 public/                        copied as is: screenshots/, CNAME
 ```
 
@@ -34,17 +35,15 @@ When the app adds a theme, add it to `src/themes.ts`; its colours come from the 
 
 ## Screenshots
 
-`public/screenshots/{light,dark}-{browse,edit,settings}.webp` are the real app, taken on macOS with a demo library of public-domain books from [Standard Ebooks](https://standardebooks.org). To take them again (after a UI change, say):
+`public/screenshots/{light,dark}-{grid,list,details,browse,edit,settings,plugins}.webp` are the real app, taken on macOS with a demo library of public-domain books from [Standard Ebooks](https://standardebooks.org). To take them again (after a UI change, say):
 
 ```bash
 scripts/demo-library.py    # once, or when scripts/demo-books.json changes: a demo library at /Users/Shared/My Library
 scripts/screenshots.py     # with `cargo tauri dev` running in ../magnitide; keep its window in front
 ```
 
-`demo-library.py` downloads the books in `scripts/demo-books.json` as EPUBs and builds the library with the app repo's `add_books` and `apply_metadata` examples, giving the books the tags, series, ratings and shelves listed there, then sets when each was added and first published straight in its database (the core has no setter for those). `screenshots.py` runs `scripts/screenshots/tour.js` inside the dev app (it relaunches, opens the demo library, shows each view in Light and Dark, then puts back the library and every setting it touched), captures the window and keeps the views that hold still. It checks first that the screen can be captured: a locked screen stops it halfway.
+`demo-library.py` downloads the books in `scripts/demo-books.json` as EPUBs and builds the library with the app repo's `add_books` and `apply_metadata` examples, giving the books the tags, series, ratings and shelves listed there, then sets when each was added and first published straight in its database (the core has no setter for those). `screenshots.py` runs `scripts/screenshots/tour.js` inside the dev app (it relaunches, opens the demo library, shows each view in Light and Dark, then puts back the library and every setting it touched), captures the window and keeps the views that hold still. The Plugins view's list of installed plugins is the tour's own (`PLUGINS` in tour.js), not this computer's. It checks first that the screen can be captured: a locked screen stops it halfway.
 
 ## Deploy
 
 Every push to `main` runs `.github/workflows/pages.yml`: it checks out the app repo's `main` for the theme CSS and icons, runs `pnpm build`, and publishes `dist/` to Pages. Run the workflow by hand (Actions → Pages → Run workflow) after the app's themes change.
-
-While the app repo is private the workflow needs a repository secret `APP_REPO_TOKEN`: a fine-grained personal access token with **Contents: read** on `obscuredetour/magnitide`. Once that repo is public the `token:` line in the workflow and the secret can go.
