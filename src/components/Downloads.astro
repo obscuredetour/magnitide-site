@@ -2,10 +2,13 @@
 import { Download } from '@lucide/astro';
 import Button from './Button.astro';
 
-// A link to the latest release, replaced in the browser by a button per OS
-// when the release has builds attached. The templates are the buttons the
-// script fills in, so they look like every other button.
-const releases = 'https://github.com/obscuredetour/magnitide/releases/latest';
+// A link to the releases, replaced in the browser by a button per platform
+// linking straight to its file in the newest app release (tagged v…; the
+// repository's Estuary releases are skipped), the visitor's own platform
+// filled in, then the other formats and the release's page on GitHub. The
+// templates are the buttons the script fills in, so they look like every
+// other button.
+const releases = 'https://github.com/obscuredetour/magnitide/releases';
 ---
 
 <div class="mt-4 flex flex-wrap gap-2.5" data-downloads>
@@ -13,27 +16,54 @@ const releases = 'https://github.com/obscuredetour/magnitide/releases/latest';
     Download from GitHub Releases
   </Button>
 </div>
-<template data-os-button>
+<template data-mine-button>
   <Button variant="primary" icon={Download} href="">
     OS
   </Button>
 </template>
+<template data-other-button>
+  <Button variant="ghost" icon={Download} href="">
+    OS
+  </Button>
+</template>
 <template data-all-button>
-  <Button variant="ghost" href="">
-    All downloads
+  <Button variant="plain" href="">
+    All downloads on GitHub
   </Button>
 </template>
 
 <script>
   const box = document.querySelector<HTMLElement>('[data-downloads]');
-  const osButton = document.querySelector<HTMLTemplateElement>('[data-os-button]');
-  const allButton = document.querySelector<HTMLTemplateElement>('[data-all-button]');
+  const templates = {
+    mine: document.querySelector<HTMLTemplateElement>('[data-mine-button]'),
+    other: document.querySelector<HTMLTemplateElement>('[data-other-button]'),
+    all: document.querySelector<HTMLTemplateElement>('[data-all-button]'),
+  };
 
-  const kinds = [
-    { label: 'macOS', match: /\.dmg$/i },
-    { label: 'Windows', match: /\.(msi|exe)$/i },
-    { label: 'Linux', match: /\.(AppImage|deb)$/i },
+  type Os = 'mac' | 'windows' | 'linux';
+
+  /** The main file for each platform, as tauri-action names them (Magnitide_0.7.0_aarch64.dmg…). */
+  const main: { os: Os; label: string; match: RegExp }[] = [
+    { os: 'mac', label: 'macOS · Apple Silicon', match: /_aarch64\.dmg$/i },
+    { os: 'mac', label: 'macOS · Intel', match: /_x64\.dmg$/i },
+    { os: 'windows', label: 'Windows', match: /-setup\.exe$/i },
+    { os: 'linux', label: 'Linux · AppImage', match: /\.AppImage$/i },
   ];
+  /** The rest, as plain links under the buttons. */
+  const more: { label: string; match: RegExp }[] = [
+    { label: 'Windows .msi', match: /\.msi$/i },
+    { label: 'Linux .deb', match: /\.deb$/i },
+    { label: 'Linux .rpm', match: /\.rpm$/i },
+  ];
+
+  /** The visitor's platform, from the browser (an iPad says Mac, but has nothing to download). */
+  const mine: Os | null = /Mac/i.test(navigator.platform)
+    ? 'mac'
+    : /Win/i.test(navigator.platform)
+      ? 'windows'
+      : /Linux/i.test(navigator.platform) && !/Android/i.test(navigator.userAgent)
+        ? 'linux'
+        : null;
 
   /** A copy of a template's button, pointing at `href`, with its text set. */
   const button = (template: HTMLTemplateElement, href: string, label: string) => {
@@ -47,30 +77,54 @@ const releases = 'https://github.com/obscuredetour/magnitide/releases/latest';
   interface Release {
     tag_name: string;
     html_url: string;
+    draft: boolean;
+    prerelease: boolean;
     published_at?: string;
     assets?: { name: string; browser_download_url: string }[];
   }
 
-  if (box && osButton && allButton) {
-    fetch('https://api.github.com/repos/obscuredetour/magnitide/releases/latest', {
+  if (box && templates.mine && templates.other && templates.all) {
+    const {
+      mine: mineButton,
+      other: otherButton,
+      all: allButton,
+    } = templates as Record<keyof typeof templates, HTMLTemplateElement>;
+    fetch('https://api.github.com/repos/obscuredetour/magnitide/releases?per_page=20', {
       headers: { Accept: 'application/vnd.github+json' },
     })
-      .then((r) => (r.ok ? (r.json() as Promise<Release>) : Promise.reject(new Error(r.statusText))))
-      .then((release) => {
-        const found = kinds.flatMap((k) => {
-          const asset = release.assets?.find((a) => k.match.test(a.name));
-          return asset ? [{ label: k.label, href: asset.browser_download_url }] : [];
+      .then((r) => (r.ok ? (r.json() as Promise<Release[]>) : Promise.reject(new Error(r.statusText))))
+      .then((list) => {
+        // Newest first; the app's are tagged v<version>, Estuary's estuary-v<N>.
+        const release = list.find((r) => !r.draft && !r.prerelease && /^v\d/.test(r.tag_name));
+        if (!release) return;
+        const find = (match: RegExp) => release.assets?.find((a) => match.test(a.name))?.browser_download_url;
+        const buttons = main.flatMap((m) => {
+          const href = find(m.match);
+          return href ? [{ ...m, href }] : [];
         });
-        if (!found.length) return;
-        const version = document.createElement('p');
-        version.className = 'w-full text-sm text-muted';
-        version.textContent = release.published_at
-          ? `${release.tag_name}, released ${new Date(release.published_at).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' })}`
-          : release.tag_name;
+        if (!buttons.length) return;
+        // The visitor's platform first and filled in; the others as they were.
+        buttons.sort((a, b) => Number(b.os === mine) - Number(a.os === mine));
+        const links = more.flatMap((m) => {
+          const href = find(m.match);
+          if (!href) return [];
+          const a = document.createElement('a');
+          a.href = href;
+          a.className = 'text-muted';
+          a.textContent = m.label;
+          return [a];
+        });
+        const line = document.createElement('p');
+        line.className = 'w-full text-sm text-muted';
+        const released = release.published_at
+          ? `, released ${new Date(release.published_at).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' })}`
+          : '';
+        line.append(`${release.tag_name}${released}`);
+        for (const a of links) line.append(' · ', a);
         box.replaceChildren(
-          ...found.map((f) => button(osButton, f.href, f.label)),
-          button(allButton, release.html_url, 'All downloads'),
-          version,
+          ...buttons.map((b) => button(b.os === mine ? mineButton : otherButton, b.href, b.label)),
+          button(allButton, release.html_url, 'All downloads on GitHub'),
+          line,
         );
       })
       .catch(() => {
