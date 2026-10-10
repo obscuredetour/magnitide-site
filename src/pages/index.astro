@@ -1,16 +1,5 @@
 ---
-import {
-  Blocks,
-  Download,
-  HardDrive,
-  Palette,
-  Pencil,
-  Puzzle,
-  Search,
-  Sparkles,
-  TabletSmartphone,
-  Wifi,
-} from '@lucide/astro';
+import { Blocks, HardDrive, Palette, Pencil, Puzzle, Search, Sparkles, TabletSmartphone, Wifi } from '@lucide/astro';
 import Button from '../components/Button.astro';
 import Card from '../components/Card.astro';
 import Downloads from '../components/Downloads.astro';
@@ -40,8 +29,9 @@ const repo = 'https://github.com/obscuredetour/magnitide';
     native Rust core and a Tauri desktop app, built to stay quick with 50,000 books and more.
     <Fragment slot="after">
       <div class="mt-7 flex flex-wrap justify-center gap-3">
-        <Button variant="primary" icon={Download} href={`${repo}/releases/latest`}>
-          Download
+        {/* To the downloads below, which link each platform's build of the latest release. */}
+        <Button variant="primary" href="#get">
+          Get the app
         </Button>
         <Button variant="ghost" icon={GitHub} href={repo}>
           View on GitHub

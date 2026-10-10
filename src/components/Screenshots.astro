@@ -1,4 +1,6 @@
 ---
+import Wave from './Wave.astro';
+
 // The app itself, one view at a time, in Light or Dark to match the page.
 // The images are public/screenshots/, taken by scripts/screenshots.py.
 
@@ -45,29 +47,36 @@ const img = 'block h-auto w-full drop-shadow-[0_12px_32px_color-mix(in_srgb,var(
       </button>
     ))}
   </div>
-  {views.map((v, i) => (
-    <figure id={`shot-${v.id}`} role="tabpanel" aria-labelledby={`shot-tab-${v.id}`} hidden={i !== 0}>
-      <img
-        class={`${img} dark:hidden`}
-        src={`screenshots/light-${v.id}.webp`}
-        alt={`Magnitide’s ${v.id} view, in the Light theme`}
-        width="2200"
-        height="1410"
-        loading="lazy"
-        decoding="async"
-      />
-      <img
-        class={`${img} hidden dark:block`}
-        src={`screenshots/dark-${v.id}.webp`}
-        alt={`Magnitide’s ${v.id} view, in the Dark theme`}
-        width="2200"
-        height="1410"
-        loading="lazy"
-        decoding="async"
-      />
-      <figcaption class="mx-auto mt-4.5 max-w-[62ch] text-center text-[0.95rem] text-muted">{v.caption}</figcaption>
-    </figure>
-  ))}
+  <div class="relative isolate">
+    {/* The mark's wave, the full width of the page, behind the screenshot (sized to it, not to the caption):
+         its crest arcs over the top, and its trough sits on the bottom edge so it stays clear of the caption. */}
+    <div class="absolute inset-x-0 top-0 -z-10 aspect-2200/1410">
+      <Wave class="absolute top-[-14%] left-1/2 h-[114%] w-screen -translate-x-1/2" />
+    </div>
+    {views.map((v, i) => (
+      <figure id={`shot-${v.id}`} role="tabpanel" aria-labelledby={`shot-tab-${v.id}`} hidden={i !== 0}>
+        <img
+          class={`${img} dark:hidden`}
+          src={`screenshots/light-${v.id}.webp`}
+          alt={`Magnitide’s ${v.id} view, in the Light theme`}
+          width="2200"
+          height="1410"
+          loading="lazy"
+          decoding="async"
+        />
+        <img
+          class={`${img} hidden dark:block`}
+          src={`screenshots/dark-${v.id}.webp`}
+          alt={`Magnitide’s ${v.id} view, in the Dark theme`}
+          width="2200"
+          height="1410"
+          loading="lazy"
+          decoding="async"
+        />
+        <figcaption class="mx-auto mt-4.5 max-w-[62ch] text-center text-[0.95rem] text-muted">{v.caption}</figcaption>
+      </figure>
+    ))}
+  </div>
 </div>
 
 <script>

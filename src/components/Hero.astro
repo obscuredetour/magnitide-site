@@ -21,8 +21,8 @@ const { eyebrow, eyebrowIcon, title, flush = false } = Astro.props;
       <Icon of={eyebrowIcon} size={14} />
       {eyebrow}
     </span>
-    <h1 class="mx-auto max-w-[32ch] text-[clamp(2rem,5.2vw,3.5rem)]/[1.1]">{title}</h1>
-    <p class="mx-auto mt-5 max-w-[56ch] text-[clamp(1.05rem,1.6vw,1.25rem)] text-muted">
+    <h1 class="mx-auto max-w-[25ch] text-[clamp(2rem,4.2vw,3.25rem)]/[1.1]">{title}</h1>
+    <p class="mx-auto mt-5 max-w-[56ch] text-[clamp(1rem,1.6vw,1.25rem)] text-muted">
       <slot />
     </p>
     <slot name="after" />

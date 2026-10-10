@@ -2,6 +2,7 @@
 import { BookOpen, Puzzle } from '@lucide/astro';
 import iconSmall from '@app-icons/128x128@2x.png';
 import GitHub from './icons/github';
+import Button from './Button.astro';
 import Icon from './Icon.astro';
 import ThemeMenu from './ThemeMenu.astro';
 
@@ -12,33 +13,46 @@ interface Props {
 
 const { current } = Astro.props;
 const link =
-  'inline-flex h-8.5 items-center gap-1.5 rounded-control px-2 text-sm font-medium text-muted hover:bg-hover hover:text-fg hover:no-underline aria-[current=page]:bg-hover aria-[current=page]:text-fg sm:px-2.5';
+  'inline-flex h-8.5 items-center gap-1.5 rounded-control px-2 text-sm font-medium text-muted hover:bg-hover hover:text-fg hover:no-underline aria-[current=page]:bg-hover aria-[current=page]:text-fg md:px-2.5';
 ---
 
 <header class="sticky top-0 z-20 border-b border-line bg-bg/80 backdrop-blur-lg backdrop-saturate-160">
   <div class="container-site flex h-14 items-center gap-2">
-    <a class="mr-auto flex items-center gap-2.5 text-[17px] font-semibold text-fg hover:no-underline" href="./">
-      <img src={iconSmall.src} alt="" width="28" height="28" class="size-7 rounded-[7px]" />
+    <a
+      class="mr-auto flex items-center gap-2.5 font-display text-xl font-semibold text-fg hover:no-underline"
+      href="./"
+    >
+      <img
+        src={iconSmall.src}
+        alt=""
+        width="28"
+        height="28"
+        class="size-7 rounded-[7px] shadow-sm border border-line"
+      />
       Magnitide
     </a>
     <nav class="flex items-center gap-1" aria-label="Site">
-      {/* No icon to fall back on, so on phones it goes. */}
-      <a class:list={[link, 'max-sm:hidden']} href="./#features">
+      {/* No icon to fall back on, so where the others drop their labels it goes. */}
+      <a class:list={[link, 'max-md:hidden']} href="./#features">
         Features
       </a>
       <a class={link} href="plugins.html" aria-current={current === 'plugins' ? 'page' : undefined}>
         <Icon of={Puzzle} />
-        <span class="max-sm:hidden">Plugins</span>
+        <span class="max-md:hidden">Plugins</span>
       </a>
       <a class={link} href="https://github.com/obscuredetour/magnitide/tree/main/docs">
         <Icon of={BookOpen} />
-        <span class="max-sm:hidden">Docs</span>
+        <span class="max-md:hidden">Docs</span>
       </a>
       <a class={link} href="https://github.com/obscuredetour/magnitide">
         <Icon of={GitHub} />
-        <span class="max-sm:hidden">GitHub</span>
+        <span class="max-md:hidden">GitHub</span>
       </a>
     </nav>
+    {/* On phones the hero's own Get the app is right below, so this one goes to leave room. */}
+    <Button variant="primary" size="sm" href="./#get" class="ml-1 max-sm:hidden">
+      Get the app
+    </Button>
     <ThemeMenu />
   </div>
 </header>
