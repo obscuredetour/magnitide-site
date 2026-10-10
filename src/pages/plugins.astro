@@ -66,6 +66,8 @@ const checked = [
   'Comments Cleaner',
 ];
 const notYet = ['Ebook Translator (needs calibre’s conversion pipeline)'];
+
+const shot = 'block h-auto w-full drop-shadow-[0_12px_32px_color-mix(in_srgb,var(--shadow)_35%,transparent)]';
 ---
 
 <Base
@@ -75,11 +77,36 @@ const notYet = ['Ebook Translator (needs calibre’s conversion pipeline)'];
   ogDescription="A native plugin API with a Rust SDK, and calibre plugins running unchanged."
   current="plugins"
 >
-  <Hero flush eyebrow="Plugins" eyebrowIcon={Puzzle} title="Extend it your way, or keep what you have.">
+  <Hero eyebrow="Plugins" eyebrowIcon={Puzzle} title="Extend it your way, or keep what you have.">
     Magnitide plugins are sandboxed WebAssembly components written against Magnitide directly. calibre plugins run
     unchanged beside them, in a calibre or in Estuary, Magnitide's compatibility layer that runs them with no calibre at
     all.
   </Hero>
+
+  {/* Settings › Plugins, both kinds side by side (taken by scripts/screenshots.py). */}
+  <figure class="container-site pt-2">
+    <img
+      class={`${shot} dark:hidden`}
+      src="screenshots/light-plugins.webp"
+      alt="Magnitide's Settings, on Plugins: two Magnitide plugins and two calibre plugins installed side by side, in the Light theme"
+      width="2200"
+      height="1410"
+      decoding="async"
+    />
+    <img
+      class={`${shot} hidden dark:block`}
+      src="screenshots/dark-plugins.webp"
+      alt="Magnitide's Settings, on Plugins: two Magnitide plugins and two calibre plugins installed side by side, in the Dark theme"
+      width="2200"
+      height="1410"
+      loading="lazy"
+      decoding="async"
+    />
+    <figcaption class="mx-auto mt-4.5 max-w-[62ch] text-center text-[0.95rem] text-muted">
+      Both kinds in Settings › Plugins: Magnitide's own on the left, calibre's on the right, turned on and off and
+      removed in the same place.
+    </figcaption>
+  </figure>
 
   <Section id="native" title="Magnitide plugins: the API and SDK">
     <Fragment slot="lede">

@@ -26,7 +26,7 @@ import time
 from pathlib import Path
 
 SITE = Path(__file__).resolve().parent.parent
-SHOTS = [f'{t}-{v}' for t in ('light', 'dark') for v in ('grid', 'list', 'details', 'browse', 'edit', 'settings')]
+SHOTS = [f'{t}-{v}' for t in ('light', 'dark') for v in ('grid', 'list', 'details', 'browse', 'edit', 'settings', 'plugins')]
 HOOK_TAG = '  <script type="module" src="/dev-hook.js"></script>\n'
 TOUR_KEY = 'screenshotTourSaved'  # tour.js's snapshot of the app's settings, there while it runs
 
