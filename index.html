@@ -10,8 +10,8 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://magnitide.com/" />
     <meta property="og:image" content="https://magnitide.com/assets/icon.png" />
-    <link rel="icon" href="assets/icon.png" />
-    <link rel="apple-touch-icon" href="assets/icon.png" />
+    <link rel="icon" href="assets/icon-small.png" />
+    <link rel="apple-touch-icon" href="assets/icon-small.png" />
     <script>
       // Apply the stored theme before paint (the full logic is js/theme.js).
       (() => {
@@ -38,7 +38,7 @@
   <body>
     <header class="nav">
       <div class="wrap">
-        <a class="brand" href="./"><img src="assets/icon.png" alt="" width="28" height="28" />Magnitide</a>
+        <a class="brand" href="./"><img src="assets/icon-small.png" alt="" width="28" height="28" />Magnitide</a>
         <nav class="nav-links" aria-label="Site">
           <a href="#features"><span class="label">Features</span></a>
           <a href="plugins.html"><svg class="icon" aria-hidden="true"><use href="#i-puzzle" /></svg><span class="label">Plugins</span></a>
@@ -67,43 +67,49 @@
         <div class="wrap">
           <div class="mock-frame" id="mock-frame">
             <div class="mock" id="mock" tabindex="0" aria-label="A mock of Magnitide's main window. Click a book, search, or open the theme menu.">
-              <div class="m-titlebar">
-                <span class="m-lights" aria-hidden="true"><i></i><i></i><i></i></span>
-                <img src="assets/icon.png" alt="" width="16" height="16" />
-                <span>Magnitide</span>
-              </div>
               <header class="m-topbar">
-                <div class="m-top-left">
-                  <button class="m-iconbtn" id="m-sidebar-toggle" type="button" aria-pressed="true" title="Hide shelves" aria-label="Shelves sidebar"><svg class="icon" aria-hidden="true"><use href="#i-panel-left" /></svg></button>
-                  <button class="m-library" id="m-library-btn" type="button" title="Library">My Library<svg class="icon icon-12" aria-hidden="true"><use href="#i-chevron-down" /></svg></button>
-                  <button class="m-device" id="m-device-btn" type="button" title="Kobo Clara"><svg class="icon" aria-hidden="true"><use href="#i-tablet" /></svg><span class="m-device-name">Kobo Clara</span><span class="m-device-count" id="m-device-count">3</span></button>
-                </div>
-                <div class="m-search">
-                  <svg class="icon" aria-hidden="true"><use href="#i-search" /></svg>
-                  <input id="m-search" type="search" placeholder='Search title, author, tag:fantasy, series:"…"' autocomplete="off" spellcheck="false" aria-label="Search" />
-                  <kbd>/</kbd>
-                  <button class="m-clear" id="m-clear" type="button" hidden aria-label="Clear search"><svg class="icon icon-12" aria-hidden="true"><use href="#i-x" /></svg></button>
-                </div>
-                <div class="m-top-right">
-                  <input class="m-size" id="m-size" type="range" min="100" max="230" value="120" aria-label="Cover size" />
-                  <div class="m-segment" role="group" aria-label="View">
-                    <button id="m-view-grid" type="button" aria-pressed="true" title="Covers (⌘1)"><svg class="icon" aria-hidden="true"><use href="#i-layout-grid" /></svg></button>
-                    <button id="m-view-list" type="button" aria-pressed="false" title="List (⌘2)"><svg class="icon" aria-hidden="true"><use href="#i-list" /></svg></button>
+                <span class="m-lights" aria-hidden="true"><i></i><i></i><i></i></span>
+                <div class="m-bar m-bar-1">
+                  <div class="m-top-left">
+                    <button class="m-library" id="m-library-btn" type="button" title="Library">My Library<svg class="icon icon-12" aria-hidden="true"><use href="#i-chevron-down" /></svg></button>
+                    <button class="m-device" id="m-device-btn" type="button" title="Kobo Clara"><svg class="icon" aria-hidden="true"><use href="#i-tablet" /></svg><span class="m-device-name">Kobo Clara</span><span class="m-device-count" id="m-device-count">3</span></button>
                   </div>
-                  <select class="m-select" id="m-sort" aria-label="Sort by">
-                    <option value="title">Title</option>
-                    <option value="author">Author</option>
-                    <option value="series">Series</option>
-                    <option value="rating">Rating</option>
-                    <option value="added">Date Added</option>
-                    <option value="published">Published</option>
-                    <option value="publisher">Publisher</option>
-                    <option value="size">Size</option>
-                  </select>
-                  <button class="m-iconbtn m-sortdir" id="m-sortdir" type="button" title="Ascending (click to reverse)"><svg class="icon" aria-hidden="true"><use href="#i-arrow-up-narrow-wide" /></svg></button>
-                  <button class="m-iconbtn m-iconbtn-lg" id="m-plugins-btn" type="button" title="Plugins"><svg class="icon" aria-hidden="true"><use href="#i-puzzle" /></svg></button>
-                  <button class="m-iconbtn m-iconbtn-lg" id="m-theme-btn" type="button" title="Theme"><svg class="icon" aria-hidden="true"><use href="#i-contrast" /></svg></button>
-                  <button class="m-iconbtn m-iconbtn-lg" type="button" title="Settings (⌘,)"><svg class="icon" aria-hidden="true"><use href="#i-settings" /></svg></button>
+                  <div class="m-top-right m-app-controls">
+                    <button class="m-iconbtn m-iconbtn-lg" id="m-plugins-btn" type="button" title="Plugins"><svg class="icon" aria-hidden="true"><use href="#i-puzzle" /></svg></button>
+                    <button class="m-iconbtn m-iconbtn-lg" id="m-theme-btn" type="button" title="Theme"><svg class="icon" aria-hidden="true"><use href="#i-contrast" /></svg></button>
+                    <button class="m-iconbtn m-iconbtn-lg" type="button" title="Settings (⌘,)"><svg class="icon" aria-hidden="true"><use href="#i-settings" /></svg></button>
+                  </div>
+                </div>
+                <div class="m-bar m-bar-2">
+                  <div class="m-top-left">
+                    <button class="m-iconbtn" id="m-sidebar-toggle" type="button" aria-pressed="true" title="Hide shelves" aria-label="Shelves sidebar"><svg class="icon" aria-hidden="true"><use href="#i-panel-left" /></svg></button>
+                  </div>
+                  <div class="m-search">
+                    <svg class="icon" aria-hidden="true"><use href="#i-search" /></svg>
+                    <input id="m-search" type="search" placeholder='Search title, author, tag:fantasy, series:"…"' autocomplete="off" spellcheck="false" aria-label="Search" />
+                    <kbd>/</kbd>
+                    <button class="m-clear" id="m-clear" type="button" hidden aria-label="Clear search"><svg class="icon icon-12" aria-hidden="true"><use href="#i-x" /></svg></button>
+                  </div>
+                  <div class="m-top-right">
+                    <input class="m-size" id="m-size" type="range" min="100" max="230" value="120" aria-label="Cover size" />
+                    <div class="m-segment" role="group" aria-label="View">
+                      <button id="m-view-grid" type="button" aria-pressed="true" title="Covers (⌘1)"><svg class="icon" aria-hidden="true"><use href="#i-layout-grid" /></svg></button>
+                      <button id="m-view-list" type="button" aria-pressed="false" title="List (⌘2)"><svg class="icon" aria-hidden="true"><use href="#i-list" /></svg></button>
+                    </div>
+                    <div class="m-sort">
+                      <select class="m-select" id="m-sort" aria-label="Sort by">
+                        <option value="title">Title</option>
+                        <option value="author">Author</option>
+                        <option value="series">Series</option>
+                        <option value="rating">Rating</option>
+                        <option value="added">Date Added</option>
+                        <option value="published">Published</option>
+                        <option value="publisher">Publisher</option>
+                        <option value="size">Size</option>
+                      </select>
+                      <button class="m-iconbtn m-sortdir" id="m-sortdir" type="button" title="Ascending (click to reverse)"><svg class="icon" aria-hidden="true"><use href="#i-arrow-up-narrow-wide" /></svg></button>
+                    </div>
+                  </div>
                 </div>
               </header>
               <div class="m-body">
@@ -119,7 +125,44 @@
               <div class="m-selbar" id="m-selbar" hidden aria-label="Selected books"></div>
             </div>
           </div>
-          <p class="mock-caption">A mock of Magnitide's main window, not the app. The themes are the real ones: try the <svg class="icon icon-14" aria-hidden="true"><use href="#i-contrast" /></svg> menu, search <code>tag:gothic -author:stoker</code>, or right-click a book.</p>
+          <p class="mock-caption">A mock of Magnitide's main window, not the app. The themes are the real ones: try the <svg class="icon icon-14" aria-hidden="true"><use href="#i-contrast" /></svg> menu, search <code>tag:gothic -author:stoker</code>, or right-click a book. Covers from <a href="https://standardebooks.org">Standard Ebooks</a>, whose editions and cover paintings are in the public domain.</p>
+        </div>
+      </section>
+
+      <section class="section shots-section" id="screenshots" aria-label="Screenshots of the app">
+        <div class="wrap">
+          <div class="section-head center">
+            <h2>The real thing</h2>
+            <p>Screenshots of Magnitide itself, with the same books, in the theme you’re viewing this page in.</p>
+          </div>
+          <div class="shots">
+            <div class="shot-tabs" role="tablist" aria-label="Screenshots">
+              <button class="shot-tab" type="button" role="tab" id="shot-tab-browse" aria-controls="shot-browse" aria-selected="true">Browse</button>
+              <button class="shot-tab" type="button" role="tab" id="shot-tab-edit" aria-controls="shot-edit" aria-selected="false" tabindex="-1">Edit</button>
+              <button class="shot-tab" type="button" role="tab" id="shot-tab-settings" aria-controls="shot-settings" aria-selected="false" tabindex="-1">Settings</button>
+            </div>
+            <figure class="shot" id="shot-browse" role="tabpanel" aria-labelledby="shot-tab-browse">
+              <div class="shot-frame">
+                <img class="shot-light" src="screenshots/light-browse.webp" alt="Magnitide’s browse view, in the Light theme" width="2200" height="1410" loading="lazy" decoding="async" />
+                <img class="shot-dark" src="screenshots/dark-browse.webp" alt="Magnitide’s browse view, in the Dark theme" width="2200" height="1410" loading="lazy" decoding="async" />
+              </div>
+              <figcaption>Browse by author, series, tag, publisher, format, language and more; open a category wide to see every value, merge the ones that are one thing spelt several ways, or let Tidy Up find them.</figcaption>
+            </figure>
+            <figure class="shot" id="shot-edit" role="tabpanel" aria-labelledby="shot-tab-edit" hidden>
+              <div class="shot-frame">
+                <img class="shot-light" src="screenshots/light-edit.webp" alt="Magnitide’s edit view, in the Light theme" width="2200" height="1410" loading="lazy" decoding="async" />
+                <img class="shot-dark" src="screenshots/dark-edit.webp" alt="Magnitide’s edit view, in the Dark theme" width="2200" height="1410" loading="lazy" decoding="async" />
+              </div>
+              <figcaption>Every field in one window, with autocomplete, a cover you can swap, and Find Metadata to fill the rest from Open Library, Google Books or a plugin.</figcaption>
+            </figure>
+            <figure class="shot" id="shot-settings" role="tabpanel" aria-labelledby="shot-tab-settings" hidden>
+              <div class="shot-frame">
+                <img class="shot-light" src="screenshots/light-settings.webp" alt="Magnitide’s settings view, in the Light theme" width="2200" height="1410" loading="lazy" decoding="async" />
+                <img class="shot-dark" src="screenshots/dark-settings.webp" alt="Magnitide’s settings view, in the Dark theme" width="2200" height="1410" loading="lazy" decoding="async" />
+              </div>
+              <figcaption>The library you have open, what it holds on disk, and keeping your EPUB files’ own metadata matching the library.</figcaption>
+            </figure>
+          </div>
         </div>
       </section>
 
@@ -296,6 +339,7 @@ cargo tauri build --bundles app</code></pre>
     <script src="js/theme.js"></script>
     <script src="js/site.js"></script>
     <script src="data/books.js"></script>
+    <script src="data/covers.js"></script>
     <script src="js/mock.js"></script>
   </body>
 </html>

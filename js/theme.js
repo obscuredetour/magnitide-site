@@ -8,6 +8,8 @@ window.MagTheme = (() => {
     'Rosewater', 'Flamingo', 'Pink', 'Mauve', 'Red', 'Maroon', 'Peach',
     'Yellow', 'Green', 'Teal', 'Sky', 'Sapphire', 'Blue', 'Lavender',
   ].map((label) => ({ name: label.toLowerCase(), label }));
+  // Magnitide's own themes: their coral first, then Catppuccin's.
+  const MAGNITIDE = [{ name: 'coral', label: 'Coral' }, ...CATPPUCCIN];
   const DRACULA = [
     { name: 'red', label: 'Red' },
     { name: 'peach', label: 'Orange' },
@@ -17,16 +19,18 @@ window.MagTheme = (() => {
     { name: 'mauve', label: 'Purple' },
     { name: 'pink', label: 'Pink' },
   ];
+  // `own` is the theme's own accent (what its CSS sets `--accent` to): the
+  // picker shows it first, as the theme's, and not again among the rest.
   const THEMES = [
-    { id: 'light', label: 'Light', appearance: 'light', accents: CATPPUCCIN },
-    { id: 'dark', label: 'Dark', appearance: 'dark', accents: CATPPUCCIN },
-    { id: 'sepia', label: 'Sepia', appearance: 'light', accents: CATPPUCCIN },
-    { id: 'catppuccin-latte', label: 'Catppuccin Latte', appearance: 'light', accents: CATPPUCCIN },
-    { id: 'catppuccin-frappe', label: 'Catppuccin Frappé', appearance: 'dark', accents: CATPPUCCIN },
-    { id: 'catppuccin-macchiato', label: 'Catppuccin Macchiato', appearance: 'dark', accents: CATPPUCCIN },
-    { id: 'catppuccin-mocha', label: 'Catppuccin Mocha', appearance: 'dark', accents: CATPPUCCIN },
-    { id: 'dracula', label: 'Dracula', appearance: 'dark', accents: DRACULA },
-    { id: 'alucard', label: 'Alucard', appearance: 'light', accents: DRACULA },
+    { id: 'light', label: 'Light', appearance: 'light', accents: MAGNITIDE, own: 'coral' },
+    { id: 'dark', label: 'Dark', appearance: 'dark', accents: MAGNITIDE, own: 'coral' },
+    { id: 'sepia', label: 'Sepia', appearance: 'light', accents: MAGNITIDE, own: 'peach' },
+    { id: 'catppuccin-latte', label: 'Catppuccin Latte', appearance: 'light', accents: CATPPUCCIN, own: 'mauve' },
+    { id: 'catppuccin-frappe', label: 'Catppuccin Frappé', appearance: 'dark', accents: CATPPUCCIN, own: 'mauve' },
+    { id: 'catppuccin-macchiato', label: 'Catppuccin Macchiato', appearance: 'dark', accents: CATPPUCCIN, own: 'mauve' },
+    { id: 'catppuccin-mocha', label: 'Catppuccin Mocha', appearance: 'dark', accents: CATPPUCCIN, own: 'mauve' },
+    { id: 'dracula', label: 'Dracula', appearance: 'dark', accents: DRACULA, own: 'mauve' },
+    { id: 'alucard', label: 'Alucard', appearance: 'light', accents: DRACULA, own: 'mauve' },
   ];
   const KEY = 'magnitide-site.theme';
   const ACCENTS_KEY = 'magnitide-site.accents';
@@ -64,7 +68,8 @@ window.MagTheme = (() => {
   const currentTheme = () => byId(current());
   const accentChoice = () => {
     const a = accents[current()];
-    return a && currentTheme().accents.some((x) => x.name === a) ? a : null;
+    const t = currentTheme();
+    return a && a !== t.own && t.accents.some((x) => x.name === a) ? a : null;
   };
 
   function apply() {
@@ -149,13 +154,20 @@ window.MagTheme = (() => {
     panel.append(el('div', 'menu-sep'), label('Accent'));
     const row = el('div', 'accent-row', { role: 'group', 'aria-label': 'Accent colour' });
     const t = currentTheme();
-    const own = el('button', 'accent', { type: 'button', title: 'The theme’s own', 'aria-checked': String(accentChoice() === null), role: 'menuitemradio' });
+    const ownAccent = t.accents.find((a) => a.name === t.own);
+    const own = el('button', 'accent', {
+      type: 'button',
+      title: ownAccent ? `${ownAccent.label} (the theme’s own)` : 'The theme’s own',
+      'aria-label': ownAccent ? `${ownAccent.label}, the theme’s own accent` : 'The theme’s own accent',
+      'aria-checked': String(accentChoice() === null),
+      role: 'menuitemradio',
+    });
     const ownDot = el('span', 'accent-dot', { 'data-theme': t.id, 'data-appearance': t.appearance });
     ownDot.style.background = 'var(--accent)';
     own.append(ownDot);
     own.addEventListener('click', () => setAccent(null));
     row.append(own);
-    for (const a of t.accents) {
+    for (const a of t.accents.filter((x) => x.name !== t.own)) {
       const b = el('button', 'accent', { type: 'button', title: a.label, 'aria-label': a.label, 'aria-checked': String(accentChoice() === a.name), role: 'menuitemradio' });
       const dot = el('span', 'accent-dot');
       dot.style.background = `var(--${a.name})`;
