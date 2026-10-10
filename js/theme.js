@@ -8,8 +8,15 @@ window.MagTheme = (() => {
     'Rosewater', 'Flamingo', 'Pink', 'Mauve', 'Red', 'Maroon', 'Peach',
     'Yellow', 'Green', 'Teal', 'Sky', 'Sapphire', 'Blue', 'Lavender',
   ].map((label) => ({ name: label.toLowerCase(), label }));
-  // Magnitide's own themes: their coral first, then Catppuccin's.
-  const MAGNITIDE = [{ name: 'coral', label: 'Coral' }, ...CATPPUCCIN];
+  // Magnitide's own themes: the mark's four colours, in its order (each theme tunes them).
+  const MAGNITIDE = [
+    { name: 'yellow', label: 'Yellow' },
+    { name: 'teal', label: 'Teal' },
+    { name: 'purple', label: 'Purple' },
+    { name: 'coral', label: 'Coral' },
+  ];
+  // Sepia's: its own peach, then the mark's.
+  const SEPIA = [{ name: 'peach', label: 'Peach' }, ...MAGNITIDE];
   const DRACULA = [
     { name: 'red', label: 'Red' },
     { name: 'peach', label: 'Orange' },
@@ -24,7 +31,7 @@ window.MagTheme = (() => {
   const THEMES = [
     { id: 'light', label: 'Light', appearance: 'light', accents: MAGNITIDE, own: 'coral' },
     { id: 'dark', label: 'Dark', appearance: 'dark', accents: MAGNITIDE, own: 'coral' },
-    { id: 'sepia', label: 'Sepia', appearance: 'light', accents: MAGNITIDE, own: 'peach' },
+    { id: 'sepia', label: 'Sepia', appearance: 'light', accents: SEPIA, own: 'peach' },
     { id: 'catppuccin-latte', label: 'Catppuccin Latte', appearance: 'light', accents: CATPPUCCIN, own: 'mauve' },
     { id: 'catppuccin-frappe', label: 'Catppuccin Frappé', appearance: 'dark', accents: CATPPUCCIN, own: 'mauve' },
     { id: 'catppuccin-macchiato', label: 'Catppuccin Macchiato', appearance: 'dark', accents: CATPPUCCIN, own: 'mauve' },
