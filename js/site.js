@@ -1,5 +1,6 @@
-// Site behaviour: the icon sprite, the nav theme menu, and download buttons
-// filled from the latest GitHub release when one has assets.
+// Site behaviour: the icon sprite, the nav theme menu, download buttons
+// filled from the latest GitHub release when one has assets, and the
+// screenshot tabs.
 (() => {
   // Icons: one sprite, fetched once and inlined so <use href="#i-…"> works everywhere.
   fetch('icons.svg')
@@ -53,4 +54,27 @@
     .catch(() => {
       /* no release yet, rate-limited or offline: the Releases link stays */
     });
+})();
+
+// The screenshot tabs: one view at a time; arrow keys move between tabs.
+(() => {
+  const tabs = [...document.querySelectorAll('.shot-tab')];
+  const select = (tab) => {
+    for (const t of tabs) {
+      const on = t === tab;
+      t.setAttribute('aria-selected', String(on));
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+    }
+  };
+  for (const [i, tab] of tabs.entries()) {
+    tab.addEventListener('click', () => select(tab));
+    tab.addEventListener('keydown', (e) => {
+      const step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+      if (!step) return;
+      const next = tabs[(i + step + tabs.length) % tabs.length];
+      select(next);
+      next.focus();
+    });
+  }
 })();

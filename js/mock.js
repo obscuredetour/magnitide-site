@@ -118,6 +118,7 @@
 
   // ---------- Pieces ----------
   const hue = (b) => (b.id * 47) % 360;
+  /** The book's cover (data/covers.js), over the cover Magnitide generates for a book without one, which shows until it loads or if it can't. */
   function cover(b, { large = false, compact = false } = {}) {
     const c = el('div', `m-placeholder${compact ? ' compact' : ''}`);
     c.style.setProperty('--hue', String(hue(b)));
@@ -126,6 +127,13 @@
     const a = el('div', 'm-placeholder-author');
     a.textContent = b.authors;
     c.append(t, a);
+    const art = window.MOCK_COVERS?.[b.id];
+    if (art) {
+      const img = el('img', 'm-cover-img', { src: art.file, alt: '', loading: 'lazy', decoding: 'async', draggable: 'false' });
+      if (art.painting) img.title = `Cover: ${art.painting}`;
+      img.addEventListener('error', () => img.remove());
+      c.append(img);
+    }
     return c;
   }
   const stars = (n) => (n ? '★'.repeat(n) + '☆'.repeat(5 - n) : '');
@@ -531,6 +539,10 @@
   }
 
   // ---------- Menus ----------
+  /** A library's kind, as LibraryMenu's KindBadge shows it. */
+  function kindBadge(kind) {
+    return Object.assign(el('span', `m-kind m-kind-${kind}`), { textContent: kind === 'magnitide' ? 'Magnitide' : 'calibre · read-only' });
+  }
   let openMenu = null;
   function closeMenu() {
     if (openMenu) {
@@ -553,8 +565,26 @@
         menu.append(Object.assign(el('div', 'menu-label'), { textContent: it.label }));
         continue;
       }
-      const b = el('button', `menu-item plain${it.danger ? ' danger' : ''}`, { type: 'button', role: 'menuitem' });
-      b.append(document.createTextNode(it.text));
+      // What the menu is about (the open library, a device): text, not an item.
+      if (it.head) {
+        const head = el('div', 'm-menu-head');
+        const top = el('div', 'm-menu-head-title');
+        top.append(Object.assign(el('span'), { textContent: it.head.title }));
+        if (it.head.badge) top.append(kindBadge(it.head.badge));
+        head.append(top);
+        for (const line of it.head.lines) head.append(Object.assign(el('div', line.faint ? 'm-faint' : 'm-muted'), { textContent: line.text }));
+        menu.append(head);
+        continue;
+      }
+      const checkable = it.checked !== undefined;
+      const b = el('button', checkable ? 'menu-item m-check' : `menu-item plain${it.danger ? ' danger' : ''}`, {
+        type: 'button',
+        role: checkable ? 'menuitemradio' : 'menuitem',
+        ...(checkable ? { 'aria-checked': String(it.checked) } : {}),
+      });
+      if (checkable) b.append(icon('check', 14));
+      b.append(Object.assign(el('span', 'm-menu-text'), { textContent: it.text }));
+      if (it.badge) b.append(kindBadge(it.badge));
       if (it.disabled) b.disabled = true;
       b.addEventListener('click', () => {
         closeMenu();
@@ -657,31 +687,49 @@
     const r = mock.getBoundingClientRect();
     const b = e.currentTarget.getBoundingClientRect();
     const s = scale();
+    // As LibraryMenu.tsx: the open library, what to do with it, the recent ones.
     showMenu((b.left - r.left) / s, (b.bottom - r.top) / s + 4, [
-      { label: 'Libraries' },
-      { text: '✓ My Library' },
-      { text: 'Calibre Library  (read-only)' },
+      {
+        head: {
+          title: 'My Library',
+          badge: 'magnitide',
+          lines: [{ text: '/Users/you/Books/Magnitide Library' }, { text: `${books.length} books · loaded in 4 ms`, faint: true }],
+        },
+      },
+      { text: 'Add Books…' },
+      { text: 'Show in Finder' },
       '-',
-      { text: 'Open Library…' },
-      { text: 'Import a calibre Library…' },
-    ]);
+      { label: 'Recent' },
+      { text: 'Book Club', badge: 'magnitide' },
+      { text: 'Calibre Library', badge: 'calibre' },
+      '-',
+      { text: 'Open Another Library…' },
+    ], 'm-wide-menu');
   });
   $('m-device-btn').addEventListener('click', (e) => {
     const r = mock.getBoundingClientRect();
     const b = e.currentTarget.getBoundingClientRect();
     const s = scale();
     const on = books.filter((x) => x.onDevice).length;
+    // As DeviceMenu.tsx: the device and what's on it (text, not items), its actions, then the filter.
+    const filter = state.query.trim();
     showMenu((b.left - r.left) / s, (b.bottom - r.top) / s + 4, [
-      { label: lib.device.name },
-      { text: `${on} ${on === 1 ? 'book' : 'books'} from this library · 24.1 GB free of 28.4 GB` },
+      {
+        head: {
+          title: lib.device.name,
+          lines: [{ text: `${on} ${on === 1 ? 'book' : 'books'} from this library` }, { text: '24.1 GB free of 28.4 GB' }],
+        },
+      },
       { text: 'Sync Shelves', run: () => fakeAction('Sync Shelves') },
       { text: 'Rescan' },
+      { text: 'Show in Finder' },
       { text: `Eject “${lib.device.name}”` },
       '-',
       { label: 'Show' },
-      { text: 'All books', run: () => setQuery('') },
-      { text: 'Books on a device', run: () => setQuery('ondevice:yes') },
-    ]);
+      { text: 'All books', checked: filter !== 'ondevice:yes' && filter !== 'ondevice:no', run: () => setQuery('') },
+      { text: 'Books on a device', checked: filter === 'ondevice:yes', run: () => setQuery('ondevice:yes') },
+      { text: 'Books not on a device', checked: filter === 'ondevice:no', run: () => setQuery('ondevice:no') },
+    ], 'm-wide-menu');
   });
 
   // ---------- Keys (only while the mock has focus) ----------

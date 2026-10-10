@@ -1,7 +1,8 @@
 // The mock library: public-domain books, with made-up library details
 // (shelves, ratings, formats, a "Pages" custom field, what's on the Kobo).
-// Covers are generated from the book id, as Magnitide does for books
-// without one, so there are no cover images to license.
+// Covers are the Standard Ebooks editions' (data/covers.js, from
+// scripts/fetch-covers.py); a book without one gets a cover generated from
+// its id, as Magnitide does.
 window.MOCK_LIBRARY = {
   device: { name: 'Kobo Clara', kind: 'kobo' },
   shelves: ['To read', 'Favourites', 'Classics on the Kobo', 'Science fiction'],
@@ -57,22 +58,22 @@ window.MOCK_LIBRARY = {
     },
     {
       id: 4,
-      title: 'Twenty Thousand Leagues Under the Seas',
+      title: 'From the Earth to the Moon',
       authors: 'Jules Verne',
       series: 'Voyages extraordinaires',
-      seriesIndex: 6,
-      published: 1870,
+      seriesIndex: 4,
+      published: 1865,
       added: '2026-03-04',
       publisher: 'Standard Ebooks',
       tags: ['Science fiction', 'Adventure'],
       formats: ['EPUB', 'KEPUB'],
-      size: 1.1,
-      pages: 392,
+      size: 0.7,
+      pages: 236,
       stars: 4,
       shelves: ['Classics on the Kobo', 'Science fiction'],
       onDevice: true,
       description:
-        'Professor Aronnax sets out to hunt a sea monster and ends up a guest, or a prisoner, aboard Captain Nemo’s Nautilus. A tour of the world’s oceans from below.',
+        'With the Civil War over and nothing left to shoot at, Baltimore’s Gun Club sets out to fire a shell at the Moon, and then three men decide to ride inside it.',
     },
     {
       id: 5,
