@@ -47,5 +47,3 @@ scripts/screenshots.py     # with `cargo tauri dev` running in ../magnitide; kee
 ## Deploy
 
 Every push to `main` runs `.github/workflows/pages.yml`: it checks out the app repo's `main` for the theme CSS and icons, runs `pnpm build`, and publishes `dist/` to Pages. Run the workflow by hand (Actions → Pages → Run workflow) after the app's themes change.
-
-While the app repo is private the workflow needs a repository secret `APP_REPO_TOKEN`: a fine-grained personal access token with **Contents: read** on `obscuredetour/magnitide`. Once that repo is public the `token:` line in the workflow and the secret can go.
