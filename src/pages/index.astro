@@ -200,6 +200,15 @@ const repo = 'https://github.com/obscuredetour/magnitide';
             <strong class="text-fg">Linux</strong> with WebKitGTK 4.1 (Ubuntu 22.04 or later)
           </li>
         </ul>
+        {/* Until the AUR takes new accounts again; then `yay -S magnitide-bin`. */}
+        <div class="mt-4 text-[0.95rem] text-muted">
+          <p>
+            <strong class="text-fg">Arch Linux</strong>: the <code>magnitide-bin</code> package is on its way to the
+            AUR. Until then, build it from the repository (it repackages the release's <code>.deb</code>):
+          </p>
+          <pre class="mt-1.5"><code>git clone https://github.com/obscuredetour/magnitide.git
+cd magnitide/packaging/aur/magnitide-bin && makepkg -si</code></pre>
+        </div>
       </div>
       <div class="text-[0.95rem] text-muted">
         <h3 class="mb-3.5 font-sans text-sm tracking-[0.06em] uppercase">Or build from source</h3>
