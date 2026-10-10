@@ -29,8 +29,8 @@ window.MagTheme = (() => {
   // `own` is the theme's own accent (what its CSS sets `--accent` to): the
   // picker shows it first, as the theme's, and not again among the rest.
   const THEMES = [
-    { id: 'light', label: 'Light', appearance: 'light', accents: MAGNITIDE, own: 'coral' },
-    { id: 'dark', label: 'Dark', appearance: 'dark', accents: MAGNITIDE, own: 'coral' },
+    { id: 'light', label: 'Light', appearance: 'light', accents: MAGNITIDE, own: 'teal' },
+    { id: 'dark', label: 'Dark', appearance: 'dark', accents: MAGNITIDE, own: 'teal' },
     { id: 'sepia', label: 'Sepia', appearance: 'light', accents: SEPIA, own: 'peach' },
     { id: 'catppuccin-latte', label: 'Catppuccin Latte', appearance: 'light', accents: CATPPUCCIN, own: 'mauve' },
     { id: 'catppuccin-frappe', label: 'Catppuccin Frappé', appearance: 'dark', accents: CATPPUCCIN, own: 'mauve' },
