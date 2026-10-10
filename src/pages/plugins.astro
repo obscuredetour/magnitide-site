@@ -43,14 +43,14 @@ const hosts = [
     experimental: false,
   },
   {
-    name: 'Magnitide’s own runtime',
-    text: 'No calibre at all: a downloaded CPython and PyQt6 with a <code>calibre</code> package written for Magnitide that mirrors calibre’s API closely enough that plugins written for calibre 5 to 9 load and run.',
+    name: 'Estuary',
+    text: 'Magnitide’s compatibility layer for calibre plugins, with no calibre at all: a downloaded CPython and PyQt6 with a <code>calibre</code> package written for Magnitide that mirrors calibre’s API closely enough that plugins written for calibre 5 to 9 load and run.',
     size: '~60 MB',
     experimental: true,
   },
 ];
 
-// calibre plugins the test suite loads in Magnitide's runtime (update the date in the text with this list).
+// calibre plugins the test suite loads in Estuary (update the date in the text with this list).
 const checked = [
   'Count Pages',
   'Reading List',
@@ -77,7 +77,8 @@ const notYet = ['Ebook Translator (needs calibre’s conversion pipeline)'];
 >
   <Hero flush eyebrow="Plugins" eyebrowIcon={Puzzle} title="Extend it your way, or keep what you have.">
     Magnitide plugins are sandboxed WebAssembly components written against Magnitide directly. calibre plugins run
-    unchanged beside them, in a calibre or in Magnitide's own runtime.
+    unchanged beside them, in a calibre or in Estuary, Magnitide's compatibility layer that runs them with no calibre at
+    all.
   </Hero>
 
   <Section id="native" title="Magnitide plugins: the API and SDK">
@@ -224,7 +225,7 @@ cargo run -p magnitide-plugins-wasm --bin mgp -- check target/plugins/my-source.
       <h3>Checked against real plugins</h3>
       <p>
         A corpus of plugins is installed and loaded by the test suite in each host. As of October 2026 every one of
-        these loads in Magnitide's runtime:
+        these loads in Estuary:
       </p>
       <div class="flex flex-wrap gap-1.5">
         {checked.map((name) => (
@@ -236,8 +237,8 @@ cargo run -p magnitide-plugins-wasm --bin mgp -- check target/plugins/my-source.
       </div>
       <p>
         Loading is not the same as every feature working: the plugins' own dialogs and jobs are exercised by hand, and
-        the compatibility package grows as gaps turn up. A plugin that works in a calibre and fails in the runtime
-        points at one; the installed-calibre host is the oracle.
+        the compatibility package grows as gaps turn up. A plugin that works in a calibre and fails in Estuary points at
+        one; the installed-calibre host is the oracle.
       </p>
       <div class="flex flex-wrap gap-2 pt-2">
         <Button size="sm" icon={BookOpen} href={`${repo}/blob/main/docs/calibre-plugins.md`}>
