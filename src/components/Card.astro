@@ -2,7 +2,9 @@
 import type { AstroComponent } from '@lucide/astro';
 import Icon from './Icon.astro';
 
-// A feature card: an icon, a title, some text, and maybe a link to more.
+// A feature card: an icon, a title, some text, and maybe a link to more. The
+// icon sits in an accent disc, cut out in the card's own colour, and appears
+// again as a faint watermark running off the top-right corner.
 interface Props {
   icon: AstroComponent;
   title: string;
@@ -10,13 +12,21 @@ interface Props {
 }
 
 const { icon, title, more } = Astro.props;
+const Watermark = icon;
 ---
 
-<article class="flex flex-col gap-2.5 rounded-card border border-line bg-panel p-5.5 text-[0.95rem] text-muted [&_ul]:list-disc [&_ul]:pl-4.5 [&_li+li]:mt-1">
-  <div class="grid size-9 place-items-center rounded-control bg-highlight text-accent">
+<article class="relative isolate flex flex-col gap-2.5 overflow-hidden rounded-card border border-line bg-panel p-5.5 text-[0.95rem] text-muted [&_ul]:list-disc [&_ul]:pl-4.5 [&_li+li]:mt-1">
+  {/* Lucide's own scaling stroke here, so it's bold at this size, unlike <Icon>'s even line. */}
+  <Watermark
+    size={144}
+    stroke-width={1.5}
+    class="absolute -top-7 -right-7 -z-10 rotate-[-8deg] text-accent/8"
+    aria-hidden="true"
+  />
+  <div class="grid size-11 place-items-center rounded-full bg-accent text-panel ring-6 ring-accent/12">
     <Icon of={icon} size={20} />
   </div>
-  <h3 class="text-xl text-fg">{title}</h3>
+  <h3 class="mt-2 text-xl text-fg">{title}</h3>
   <slot />
   {more && (
     <a class="mt-auto pt-1.5 text-[0.9rem] font-medium" href={more.href}>
