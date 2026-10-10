@@ -8,9 +8,11 @@ interface Props {
   class?: string;
   /** Line width in pixels. */
   width?: number;
+  /** Draw the line in, left to right, when it scrolls into view (the script below). */
+  draw?: boolean;
 }
 
-const { class: className, width = 5 } = Astro.props;
+const { class: className, width = 5, draw = false } = Astro.props;
 
 // The mark's wave, sampled finely enough to be smooth at any size.
 const steps = 216;
@@ -22,7 +24,15 @@ const points = Array.from({ length: steps + 1 }, (_, i) => {
 ---
 
 <svg
-  class:list={['pointer-events-none text-accent', className]}
+  class:list={[
+    'pointer-events-none text-accent',
+    // Revealed by a clip (the line always runs rightward, so it reads as being drawn); the
+    // margin keeps the round ends. Hidden at once while waiting; only the reveal is animated.
+    draw &&
+      'transition-[clip-path] duration-700 ease-in-out [clip-path:inset(-8px)] data-[draw=waiting]:transition-none data-[draw=waiting]:[clip-path:inset(-8px_calc(100%_+_8px)_-8px_-8px)]',
+    className,
+  ]}
+  data-draw={draw ? '' : undefined}
   viewBox="0 0 54 23.63"
   preserveAspectRatio="none"
   fill="none"
@@ -36,3 +46,30 @@ const points = Array.from({ length: steps + 1 }, (_, i) => {
     vector-effect="non-scaling-stroke"
   ></path>
 </svg>
+
+<script>
+  // Waves with `draw` wait, undrawn, until they scroll into view, then draw in; those that come
+  // into view together draw one after another. Waves already on screen when the page loads stay
+  // as they are, so nothing flickers, and with reduced motion none of them move.
+  const waves = [...document.querySelectorAll<SVGElement>('[data-draw]')];
+  if (waves.length && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries
+          .filter((e) => e.isIntersecting)
+          .forEach((e, i) => {
+            const wave = e.target as SVGElement;
+            wave.style.transitionDelay = `${i * 90}ms`;
+            wave.dataset.draw = 'drawn';
+            observer.unobserve(wave);
+          });
+      },
+      { rootMargin: '0px 0px -12% 0px' },
+    );
+    for (const wave of waves) {
+      if (wave.getBoundingClientRect().top < innerHeight) continue;
+      wave.dataset.draw = 'waiting';
+      observer.observe(wave);
+    }
+  }
+</script>
