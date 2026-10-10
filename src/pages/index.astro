@@ -1,5 +1,5 @@
 ---
-import { Blocks, HardDrive, Palette, Pencil, Puzzle, Search, Sparkles, TabletSmartphone, Wifi } from '@lucide/astro';
+import { Blocks, HardDrive, Package, Palette, Pencil, Search, Sparkles, TabletSmartphone, Wifi } from '@lucide/astro';
 import Button from '../components/Button.astro';
 import Card from '../components/Card.astro';
 import Downloads from '../components/Downloads.astro';
@@ -106,7 +106,7 @@ const repo = 'https://github.com/obscuredetour/magnitide';
       Magnitide has a plugin API of its own, and runs the calibre plugins you already rely on.
     </Fragment>
     <div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] gap-5">
-      <Card icon={Blocks} title="Magnitide plugins" more={{ href: 'plugins.html#native', label: 'The API and SDK' }}>
+      <Card icon={Package} title="Magnitide plugins" more={{ href: 'plugins.html#native', label: 'The API and SDK' }}>
         <p>
           Small, sandboxed WebAssembly components in <code>.mgp</code> files, added in Settings → Plugins. A plugin can
           do only what its package declares, gets a fresh instance per call, and a crash is a plugin error, not an app
@@ -132,7 +132,7 @@ const repo = 'https://github.com/obscuredetour/magnitide';
         </p>
       </Card>
       <Card
-        icon={Puzzle}
+        icon={Blocks}
         title="Your calibre plugins, unchanged"
         more={{ href: 'plugins.html#calibre', label: 'Hosts, coverage and limits' }}
       >
