@@ -1,7 +1,7 @@
 ---
 import { BookOpen, Puzzle } from '@lucide/astro';
-import iconSmall from '@app-icons/128x128@2x.png';
 import GitHub from './icons/github';
+import AppIcon from './AppIcon.astro';
 import Button from './Button.astro';
 import Icon from './Icon.astro';
 import ThemeMenu from './ThemeMenu.astro';
@@ -22,13 +22,7 @@ const link =
       class="mr-auto flex items-center gap-2.5 font-display text-xl font-semibold text-fg hover:no-underline"
       href="./"
     >
-      <img
-        src={iconSmall.src}
-        alt=""
-        width="28"
-        height="28"
-        class="size-7 rounded-[7px] shadow-sm border border-line"
-      />
+      <AppIcon class="size-7 rounded-[7px] shadow-sm border border-line" />
       Magnitide
     </a>
     <nav class="flex items-center gap-1" aria-label="Site">

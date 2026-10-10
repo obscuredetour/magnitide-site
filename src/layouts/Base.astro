@@ -32,7 +32,9 @@ const appearances = Object.fromEntries(THEMES.map((t) => [t.id, t.appearance]));
     <meta property="og:type" content="website" />
     <meta property="og:url" content={new URL(Astro.url.pathname, Astro.site)} />
     <meta property="og:image" content={new URL(icon.src, Astro.site)} />
-    <link rel="icon" href={iconSmall.src} />
+    <link rel="icon" href={iconSmall.src} sizes="256x256" />
+    {/* Light or dark as the browser is; the PNG for browsers without SVG icons. */}
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href={iconSmall.src} />
     <script is:inline define:vars={{ appearances, THEME_KEY, ACCENTS_KEY }}>
       // Applies the stored theme before paint, so the page never flashes the

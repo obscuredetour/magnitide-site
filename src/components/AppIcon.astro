@@ -1,0 +1,22 @@
+---
+import { appIcon } from '../appIcon';
+
+// The app icon (appIcon.ts), on its light or dark background to match the
+// page's theme, as the screenshots do. Shape it with classes: size, rounding.
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+const [x, y, width, height] = appIcon.viewBox.split(' ');
+---
+
+<svg
+  viewBox={appIcon.viewBox}
+  class:list={['flex-none overflow-hidden', className]}
+  style={`--icon-light: ${appIcon.light}; --icon-dark: ${appIcon.dark}`}
+  aria-hidden="true"
+>
+  <rect x={x} y={y} width={width} height={height} class="fill-(--icon-light) dark:fill-(--icon-dark)"></rect>
+  <Fragment set:html={appIcon.slabs} />
+</svg>

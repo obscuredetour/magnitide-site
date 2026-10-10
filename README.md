@@ -25,6 +25,7 @@ src/components/                the pieces pages are made of: Section, Card, Fact
                                Screenshots, Downloads, ThemeMenu, Nav, Footer, Icon
 src/styles/global.css          Tailwind, the app's themes, and the few base styles
 src/themes.ts                  the app's themes and their accents, for the theme menu
+src/appIcon.ts                 the app icon, light and dark, from the app's Icon Composer file (nav, favicon)
 public/                        copied as is: screenshots/, CNAME
 ```
 
