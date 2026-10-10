@@ -8,8 +8,8 @@ set -euo pipefail
 cd "$(dirname "$0")"
 app="${1:-../magnitide}"
 themes="$app/crates/app/ui/src/themes"
-# The 512 px outline for link previews; the 256 px solid cut for small sizes
-# (favicon, the nav), where the outline's strokes blur together.
+# The 512 px icon for link previews; the 256 px one for small sizes (favicon,
+# the nav), so a browser scales down less.
 icon="$app/crates/app/icons/icon.png"
 icon_small="$app/crates/app/icons/128x128@2x.png"
 [ -f "$themes/index.css" ] || { echo "no theme CSS at $themes (pass the app repo path)" >&2; exit 1; }
