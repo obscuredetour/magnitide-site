@@ -1,0 +1,252 @@
+---
+import { BookOpen, FileCode, Puzzle } from '@lucide/astro';
+import Button from '../components/Button.astro';
+import Hero from '../components/Hero.astro';
+import Pill from '../components/Pill.astro';
+import Section from '../components/Section.astro';
+import Base from '../layouts/Base.astro';
+
+const repo = 'https://github.com/obscuredetour/magnitide';
+
+// The plugin kinds: the worlds in the WIT package.
+const kinds = [
+  {
+    name: 'metadata-source',
+    text: 'Shows up in Find Metadata beside the built-in sources. Exports <code>info()</code> and <code>identify(lookup)</code>: a title, authors and maybe an ISBN in; book records, best first, out.',
+  },
+  {
+    name: 'import-hook',
+    text: 'Runs on each file of its types as books are added, before the file is stored: fix it, convert it, or leave it alone. Its sandbox holds only that one file.',
+  },
+  {
+    name: 'file-metadata',
+    text: 'Reads and writes metadata for a format Magnitide doesn’t handle itself, or handles better: <code>reads()</code>, <code>read()</code>, <code>writes()</code>, <code>write()</code>.',
+  },
+  {
+    name: 'library-action',
+    text: 'Menu items in the book menu and the Plugins button that run on the selected books, with host functions to read, search and edit the library, progress in the job bar, and questions to the user mid-run.',
+  },
+];
+
+// The calibre plugin hosts, in the order "whichever is there" tries them.
+const hosts = [
+  {
+    name: 'Your installed calibre',
+    text: 'calibre’s own <code>calibre-debug</code> runs Magnitide’s host package on calibre’s code. Plugins get the real calibre API; plugin settings stay in Magnitide’s folder, never calibre’s. calibre 6 or later.',
+    size: '—',
+    experimental: false,
+  },
+  {
+    name: 'A calibre Magnitide downloads',
+    text: 'calibre’s own release for this computer, pinned and checked against the SHA-512 calibre publishes, unpacked under Magnitide’s data folder and used only by Magnitide. Nothing is installed system-wide.',
+    size: '180–350 MB',
+    experimental: false,
+  },
+  {
+    name: 'Magnitide’s own runtime',
+    text: 'No calibre at all: a downloaded CPython and PyQt6 with a <code>calibre</code> package written for Magnitide that mirrors calibre’s API closely enough that plugins written for calibre 5 to 9 load and run.',
+    size: '~60 MB',
+    experimental: true,
+  },
+];
+
+// calibre plugins the test suite loads in Magnitide's runtime (update the date in the text with this list).
+const checked = [
+  'Count Pages',
+  'Reading List',
+  'Goodreads Sync',
+  'Generate Cover',
+  'Manage Series',
+  'Quality Check',
+  'Goodreads',
+  'Fantastic Fiction',
+  'FanFicFare',
+  'EpubMerge',
+  'EpubSplit',
+  'Comments Cleaner',
+];
+const notYet = ['Ebook Translator (needs calibre’s conversion pipeline)'];
+---
+
+<Base
+  title="Plugins – Magnitide"
+  description="Magnitide's plugin API and SDK: sandboxed WebAssembly components in any language, four kinds of plugin, and how your calibre plugins run unchanged in one of three hosts."
+  ogTitle="Magnitide plugins"
+  ogDescription="A native plugin API with a Rust SDK, and calibre plugins running unchanged."
+  current="plugins"
+>
+  <Hero flush eyebrow="Plugins" eyebrowIcon={Puzzle} title="Extend it your way, or keep what you have.">
+    Magnitide plugins are sandboxed WebAssembly components written against Magnitide directly. calibre plugins run
+    unchanged beside them, in a calibre or in Magnitide's own runtime.
+  </Hero>
+
+  <Section id="native" title="Magnitide plugins: the API and SDK">
+    <Fragment slot="lede">
+      A plugin is a WebAssembly component that implements one of the worlds in the <code>magnitide:plugin@0.1.0</code>{' '}
+      WIT package, packed with a manifest into an <code>.mgp</code> file. It runs sandboxed inside the app, in any
+      language with a WIT toolchain, and does only what its manifest declares.
+    </Fragment>
+
+    <div class="mt-5 grid grid-cols-[repeat(auto-fit,minmax(min(100%,240px),1fr))] gap-3">
+      {kinds.map((k) => (
+        <div class="rounded-card border border-line bg-panel p-4">
+          <code class="bg-highlight font-semibold text-accent">{k.name}</code>
+          <p class="mt-2 text-[0.9rem] text-muted" set:html={k.text} />
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-8 prose-site">
+      <h3>The sandbox</h3>
+      <p>
+        Each call gets a fresh instance: no state survives between calls, a crash is a plugin error and not an app
+        crash, and a plugin can't see another's memory. The instance has no filesystem, no environment and no sockets. A
+        call that works on a file sees that one file read-only at <code>/in</code> and a scratch folder at{' '}
+        <code>/out</code>, both gone when the call is done. Memory is capped at 256 MB, and a call is stopped after 60
+        seconds (an import hook gets five minutes, a library action an hour).
+      </p>
+      <p>
+        What a plugin may do is in its manifest and shown in Settings when it's added. The capabilities are{' '}
+        <strong>network</strong> (HTTP through Magnitide, with its proxy settings and user agent),{' '}
+        <strong>write-library</strong> (edit books, set covers, add formats) and <strong>read-files</strong> (open a
+        book's files). A plugin that asks for nothing can only compute over its input and read the library's metadata.
+      </p>
+
+      <h3>Packaging</h3>
+      <p>
+        An <code>.mgp</code> is a zip with a <code>manifest.toml</code> at its root, the component, and anything else
+        the plugin ships:
+      </p>
+      <pre><code>name = "Open Library (plugin)"
+version = "0.1.0"
+author = "Magnitide"
+description = "Looks books up on Open Library"
+api = "0.1"                          # magnitide:plugin API version
+kind = "metadata-source"
+capabilities = ["network"]           # [] for none
+component = "plugin.wasm"</code></pre>
+      <p>
+        Adding an <code>.mgp</code> whose name is already installed replaces it, so updates are a drag and drop.
+      </p>
+
+      <h3>Writing one</h3>
+      <p>
+        The Rust SDK, <code>magnitide-plugin-sdk</code>, gives you the generated bindings, an export macro and helpers
+        for HTTP and logging. The Open Library example does the same lookup as the built-in source in about 120 lines
+        and packs to 64 KB. Start from the template, build, and check the package without the app:
+      </p>
+      <pre><code>scripts/new-plugin.sh plugins/my-source "My Source" metadata-source
+scripts/build-plugin.sh plugins/my-source        # → target/plugins/my-source.mgp
+cargo run -p magnitide-plugins-wasm --bin mgp -- check target/plugins/my-source.mgp</code></pre>
+      <p>
+        Anything that produces a component from the WIT works the same way: <code>componentize-py</code> for Python,{' '}
+        <code>jco</code> for JavaScript, TinyGo's <code>wit-bindgen-go</code>. The manifest and the <code>.mgp</code>{' '}
+        are identical.
+      </p>
+      <p>
+        Porting a calibre metadata source is mostly deleting code. The Goodreads source in the repository is kiwidude's
+        calibre plugin rewritten on the native API: the same search and the same data read from the page, in a few
+        hundred lines of Rust instead of a plugin that needs calibre's <code>Source</code>, lxml and a worker thread per
+        result.
+      </p>
+      <div class="flex flex-wrap gap-2 pt-2">
+        <Button size="sm" icon={BookOpen} href={`${repo}/blob/main/docs/plugin-api.md`}>
+          Read docs/plugin-api.md
+        </Button>
+        <Button size="sm" variant="ghost" icon={FileCode} href={`${repo}/tree/main/plugins/template`}>
+          The template
+        </Button>
+      </div>
+    </div>
+  </Section>
+
+  <Section id="calibre" title="calibre plugins, unchanged">
+    <Fragment slot="lede">
+      The calibre plugins you rely on run as they are. Choose where in Settings → Plugins; "whichever is there" takes
+      them in this order.
+    </Fragment>
+
+    <div class="overflow-x-auto rounded-card border border-line bg-panel">
+      <table class="w-full border-collapse text-left text-[0.95rem]">
+        <thead>
+          <tr class="text-[0.8rem] tracking-[0.04em] text-muted uppercase">
+            <th class="border-b border-line px-4 py-2.5 font-semibold">Host</th>
+            <th class="border-b border-line px-4 py-2.5 font-semibold">What it is</th>
+            <th class="border-b border-line px-4 py-2.5 font-semibold">Size</th>
+            <th class="border-b border-line px-4 py-2.5 font-semibold">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {hosts.map((h) => (
+            <tr class="border-line align-top not-last:border-b">
+              <td class="px-4 py-2.5 font-medium whitespace-nowrap">{h.name}</td>
+              <td class="px-4 py-2.5" set:html={h.text} />
+              <td class="px-4 py-2.5 whitespace-nowrap">{h.size}</td>
+              <td class="px-4 py-2.5">
+                {h.experimental ? <Pill tone="experimental">Experimental</Pill> : <Pill tone="ok">Supported</Pill>}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-8 prose-site">
+      <h3>What each kind of plugin gets</h3>
+      <ul>
+        <li>
+          <strong>Metadata sources</strong> join Find Metadata, and their options dialogs work.
+        </li>
+        <li>
+          <strong>Toolbar (GUI) plugins</strong> run from the Plugins button and the book menu on a calibre-format copy
+          of the open library. Their dialogs open as their own windows, as in calibre. When a plugin asks calibre to
+          edit metadata, remove books, download metadata, convert, add or view, Magnitide does it; what the plugin
+          changed comes back into the library through Magnitide's own editing, so renaming, write-back and undo-safety
+          still hold.
+        </li>
+        <li>
+          <strong>File-type plugins</strong> run when books are added, after conversions and when a format is removed.
+        </li>
+        <li>
+          <strong>Metadata readers and writers</strong> handle the formats they declare; their priority decides against
+          Magnitide's own readers.
+        </li>
+        <li>
+          <strong>Preferences plugins</strong> get Configure… in Settings, and <strong>library-closed plugins</strong>{' '}
+          run when the library is switched or the app quits.
+        </li>
+      </ul>
+      <p>
+        Not supported: conversion input and output plugins (calibre's conversion pipeline isn't run; Magnitide converts
+        natively or with <code>ebook-convert</code>), catalog, device, store, viewer and editor plugins.
+      </p>
+
+      <h3>Checked against real plugins</h3>
+      <p>
+        A corpus of plugins is installed and loaded by the test suite in each host. As of October 2026 every one of
+        these loads in Magnitide's runtime:
+      </p>
+      <div class="flex flex-wrap gap-1.5">
+        {checked.map((name) => (
+          <Pill tone="ok">{name}</Pill>
+        ))}
+        {notYet.map((name) => (
+          <Pill>{name}</Pill>
+        ))}
+      </div>
+      <p>
+        Loading is not the same as every feature working: the plugins' own dialogs and jobs are exercised by hand, and
+        the compatibility package grows as gaps turn up. A plugin that works in a calibre and fails in the runtime
+        points at one; the installed-calibre host is the oracle.
+      </p>
+      <div class="flex flex-wrap gap-2 pt-2">
+        <Button size="sm" icon={BookOpen} href={`${repo}/blob/main/docs/calibre-plugins.md`}>
+          Read docs/calibre-plugins.md
+        </Button>
+        <Button size="sm" variant="ghost" href={`${repo}/blob/main/docs/calibre-plugins-coverage.md`}>
+          Coverage report
+        </Button>
+      </div>
+    </div>
+  </Section>
+</Base>

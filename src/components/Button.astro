@@ -1,0 +1,33 @@
+---
+import type { AstroComponent } from '@lucide/astro';
+import Icon from './Icon.astro';
+
+// A link styled as a button.
+interface Props {
+  href: string;
+  variant?: 'primary' | 'ghost' | 'plain';
+  size?: 'md' | 'sm';
+  icon?: AstroComponent;
+  class?: string;
+}
+
+const { href, variant = 'plain', size = 'md', icon, class: className } = Astro.props;
+---
+
+<a
+  href={href}
+  class:list={[
+    'inline-flex items-center gap-2 rounded-control border font-medium whitespace-nowrap text-fg hover:no-underline',
+    {
+      'h-10.5 px-4.5 text-[15px]': size === 'md',
+      'h-8.5 px-3.5 text-sm': size === 'sm',
+      'border-transparent bg-accent text-on-accent hover:brightness-108': variant === 'primary',
+      'border-line hover:bg-hover': variant === 'ghost',
+      'border-transparent bg-element hover:bg-element-hover': variant === 'plain',
+    },
+    className,
+  ]}
+>
+  {icon && <Icon of={icon} />}
+  <slot />
+</a>

@@ -1,0 +1,17 @@
+---
+// One of the "built to be trusted" facts: a bold line, a sentence, and maybe a big number above.
+interface Props {
+  title: string;
+  figure?: string;
+}
+
+const { title, figure } = Astro.props;
+---
+
+<div class="border-l-3 border-accent py-1 pl-4.5">
+  {figure && <span class="mb-1 block font-serif text-[2rem]/[1.1] font-semibold">{figure}</span>}
+  <b class="block text-[1.05rem] font-semibold">{title}</b>
+  <span class="text-[0.95rem] text-muted">
+    <slot />
+  </span>
+</div>

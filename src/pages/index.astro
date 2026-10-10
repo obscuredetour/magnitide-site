@@ -1,0 +1,237 @@
+---
+import {
+  Blocks,
+  Download,
+  HardDrive,
+  Palette,
+  Pencil,
+  Puzzle,
+  Search,
+  Sparkles,
+  TabletSmartphone,
+  Wifi,
+} from '@lucide/astro';
+import Button from '../components/Button.astro';
+import Card from '../components/Card.astro';
+import Downloads from '../components/Downloads.astro';
+import Fact from '../components/Fact.astro';
+import Hero from '../components/Hero.astro';
+import GitHub from '../components/icons/github';
+import Pill from '../components/Pill.astro';
+import Screenshots from '../components/Screenshots.astro';
+import Section from '../components/Section.astro';
+import Base from '../layouts/Base.astro';
+
+const repo = 'https://github.com/obscuredetour/magnitide';
+---
+
+<Base
+  title="Magnitide – a fast, modern ebook library manager"
+  description="Magnitide is a fast, modern ebook library manager that starts from the calibre library you already have. Native Rust core, Kobo and Kindle support, an OPDS server, and plugins: sandboxed WebAssembly ones of its own, plus your calibre plugins unchanged."
+  ogTitle="Magnitide"
+  ogDescription="A fast, modern ebook library manager that starts from the calibre library you already have."
+>
+  <Hero
+    eyebrow="Open source · macOS, Windows and Linux"
+    eyebrowIcon={Sparkles}
+    title="A fast, modern ebook library manager that starts from the calibre library you already have."
+  >
+    Magnitide opens your calibre library as it is, read-only, so calibre keeps working alongside it. Underneath is a
+    native Rust core and a Tauri desktop app, built to stay quick with 50,000 books and more.
+    <Fragment slot="after">
+      <div class="mt-7 flex flex-wrap justify-center gap-3">
+        <Button variant="primary" icon={Download} href={`${repo}/releases/latest`}>
+          Download
+        </Button>
+        <Button variant="ghost" icon={GitHub} href={repo}>
+          View on GitHub
+        </Button>
+      </div>
+      <p class="mt-4 text-sm text-faint">
+        GPL-3.0 · In active development: see the{' '}
+        <a class="text-muted" href={`${repo}/blob/main/docs/roadmap.md`}>
+          roadmap
+        </a>{' '}
+        for what's done and what's next.
+      </p>
+    </Fragment>
+  </Hero>
+
+  <section class="pt-2 pb-[clamp(48px,7vw,88px)]" aria-label="Screenshots of the app">
+    <div class="container-site">
+      <Screenshots />
+    </div>
+  </section>
+
+  <Section id="features" title="What it does">
+    <Fragment slot="lede">Everything a library manager should, on your own files, in your own folders.</Fragment>
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,300px),1fr))] gap-4">
+      <Card icon={HardDrive} title="Starts from calibre">
+        <p>
+          Open your calibre library as it is, read-only. Magnitide never writes to it, so calibre keeps working. When
+          you're ready to edit, import it into a Magnitide library of its own: books become copy-on-write clones where
+          the disk allows it (no extra space on APFS, Btrfs or XFS), and your custom columns come too.
+        </p>
+      </Card>
+      <Card icon={Search} title="Browse and find">
+        <p>
+          Covers, or a sortable, resizable, reorderable table. Search with <code>author:</code>, <code>tag:</code>,
+          <code>series:</code> and your own fields (<code>#pages:300</code>), quotes and <code>-</code> to exclude.
+          Shelves of your own, and a details panel with everything about a book.
+        </p>
+      </Card>
+      <Card icon={Pencil} title="Edit one book or many">
+        <p>
+          Author sort names, omnibus editions, several series per book, custom fields of eight kinds. Find Metadata
+          looks books up on Open Library and Google Books and lets you take what you want, field by field. Folders and
+          file names follow your edits, and metadata can be written back into EPUB files.
+        </p>
+      </Card>
+      <Card icon={TabletSmartphone} title="E-readers">
+        <p>
+          Kobo, Kindle and other devices show up when plugged in. Books go over in the format each reads best, converted
+          from EPUB to KEPUB or AZW3 natively (calibre is only a fallback), and shelves become collections on a Kobo,
+          for Kobo's own app and KOReader alike.
+        </p>
+      </Card>
+      <Card icon={Wifi} title="On your network">
+        <p>
+          An optional library server with an OPDS catalogue for reading apps, a simple page for e-reader browsers
+          (Kobo's gets KEPUBs made on the fly), and KOReader progress sync. Off by default, read-only, with an optional
+          password and a QR code to scan.
+        </p>
+      </Card>
+      <Card icon={Palette} title="Make it yours">
+        <p>
+          Nine themes (light, dark, sepia, the four Catppuccin flavours, Dracula and Alucard), any of their accents, an
+          interface size from 80% to 200%, and add-on theme files that are checked colour data, not CSS. This page wears
+          them too: try the theme menu at the top.
+        </p>
+      </Card>
+    </div>
+  </Section>
+
+  <Section id="plugins" title="Plugins, two ways">
+    <Fragment slot="lede">
+      Magnitide has a plugin API of its own, and runs the calibre plugins you already rely on.
+    </Fragment>
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] gap-5">
+      <Card icon={Blocks} title="Magnitide plugins" more={{ href: 'plugins.html#native', label: 'The API and SDK' }}>
+        <p>
+          Small, sandboxed WebAssembly components in <code>.mgp</code> files, added in Settings → Plugins. A plugin can
+          do only what its package declares, gets a fresh instance per call, and a crash is a plugin error, not an app
+          crash.
+        </p>
+        <ul>
+          <li>
+            <strong>Metadata sources</strong> that join Find Metadata.
+          </li>
+          <li>
+            <strong>Import hooks</strong> that run on files as they're added.
+          </li>
+          <li>
+            <strong>Metadata readers and writers</strong> for formats.
+          </li>
+          <li>
+            <strong>Library tools</strong> in the book menu, with progress in the job bar and questions mid-run.
+          </li>
+        </ul>
+        <p>
+          Written in any language with a WebAssembly toolchain. A Rust SDK, a template and two example sources (Open
+          Library, Goodreads) are in the repository.
+        </p>
+      </Card>
+      <Card
+        icon={Puzzle}
+        title="Your calibre plugins, unchanged"
+        more={{ href: 'plugins.html#calibre', label: 'Hosts, coverage and limits' }}
+      >
+        <p>
+          Metadata sources join Find Metadata. Toolbar plugins work on the selected books from the Plugins button or the
+          book menu; their windows open as in calibre, and what they change comes back into the library through
+          Magnitide's own editing. File-type plugins run when books are added, and readers and writers handle their
+          formats.
+        </p>
+        <p>They run in whichever host you choose:</p>
+        <div class="flex flex-wrap gap-1.5">
+          <Pill tone="ok">Your installed calibre</Pill>
+          <Pill tone="ok">A calibre Magnitide downloads for itself</Pill>
+          <Pill tone="experimental">Magnitide's own runtime, no calibre needed (experimental)</Pill>
+        </div>
+        <p class="text-sm">Conversion, catalog, device, store, viewer and editor plugins aren't supported.</p>
+      </Card>
+    </div>
+  </Section>
+
+  <Section id="why" title="Built to be trusted with a library">
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,240px),1fr))] gap-4">
+      <Fact title="Your calibre library is never written to">
+        Magnitide reads <code>metadata.db</code> and the book folders and changes nothing. Its tests check the file is
+        unchanged byte for byte.
+      </Fact>
+      <Fact title="Import costs almost no disk">
+        Books are cloned copy-on-write on APFS, Btrfs and XFS, and copied elsewhere. Your calibre library stays where it
+        was.
+      </Fact>
+      <Fact title="Plugins stay in their box">
+        A Magnitide plugin sees no files, network or library beyond what its manifest asks for, with a memory cap and a
+        time limit.
+      </Fact>
+      <Fact figure="185 ms" title="to open 50,000 books">
+        A synthetic 50,000-book calibre library loads in about 185 ms, and an unindexed search across all of it takes
+        about 35 ms, on an M3 Max.
+      </Fact>
+      <Fact title="Network only when you ask">
+        Metadata lookup, downloads and the library server are the only things that touch the network, and the app's web
+        view never contacts third-party hosts.
+      </Fact>
+      <Fact title="Kindle and Kobo without calibre">
+        EPUB → KEPUB and EPUB → AZW3 are built in, so sending to a device doesn't need calibre installed.
+      </Fact>
+    </div>
+  </Section>
+
+  <Section id="get" title="Get Magnitide">
+    <Fragment slot="lede">
+      Builds are published on GitHub Releases. Magnitide is in active development, so expect rough edges and frequent
+      updates.
+    </Fragment>
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] items-start gap-7">
+      <div>
+        <Downloads />
+        <ul class="mt-3.5 space-y-1 text-[0.95rem] text-muted">
+          <li>
+            <strong class="text-fg">macOS</strong> 13 or later
+          </li>
+          <li>
+            <strong class="text-fg">Windows</strong> 10 or later, with the WebView2 runtime (built in to Windows 11)
+          </li>
+          <li>
+            <strong class="text-fg">Linux</strong> with WebKitGTK 4.1 (Ubuntu 22.04 or later)
+          </li>
+        </ul>
+      </div>
+      <div class="text-[0.95rem] text-muted">
+        <h3 class="mb-3.5 font-sans text-sm tracking-[0.06em] uppercase">Or build from source</h3>
+        <ol class="list-decimal space-y-2 pl-5">
+          <li>
+            Install Rust with the <code>wasm32-wasip2</code> target, Node with <a href="https://pnpm.io">pnpm</a>, and
+            the Tauri CLI:
+            <pre class="mt-1.5"><code>rustup target add wasm32-wasip2
+cargo install tauri-cli --version "^2" --locked
+pnpm --dir crates/app/ui install</code></pre>
+          </li>
+          <li>
+            Run it with live reload, or build the app bundle:
+            <pre class="mt-1.5"><code>cd crates/app
+cargo tauri dev
+cargo tauri build --bundles app</code></pre>
+          </li>
+        </ol>
+        <p class="mt-3 text-sm">
+          Details in the <a href={`${repo}#setup`}>README</a>.
+        </p>
+      </div>
+    </div>
+  </Section>
+</Base>

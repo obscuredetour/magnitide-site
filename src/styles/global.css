@@ -1,0 +1,4 @@
+@import './site.css';
+/* The app's themes, straight from its repo (see astro.config.mjs). Switching
+   theme sets data-theme on <html> and every colour in site.css follows. */
+@import '@app-themes/index.css';

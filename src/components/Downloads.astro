@@ -1,0 +1,80 @@
+---
+import { Download } from '@lucide/astro';
+import Button from './Button.astro';
+
+// A link to the latest release, replaced in the browser by a button per OS
+// when the release has builds attached. The templates are the buttons the
+// script fills in, so they look like every other button.
+const releases = 'https://github.com/obscuredetour/magnitide/releases/latest';
+---
+
+<div class="mt-4 flex flex-wrap gap-2.5" data-downloads>
+  <Button variant="primary" icon={Download} href={releases}>
+    Download from GitHub Releases
+  </Button>
+</div>
+<template data-os-button>
+  <Button variant="primary" icon={Download} href="">
+    OS
+  </Button>
+</template>
+<template data-all-button>
+  <Button variant="ghost" href="">
+    All downloads
+  </Button>
+</template>
+
+<script>
+  const box = document.querySelector<HTMLElement>('[data-downloads]');
+  const osButton = document.querySelector<HTMLTemplateElement>('[data-os-button]');
+  const allButton = document.querySelector<HTMLTemplateElement>('[data-all-button]');
+
+  const kinds = [
+    { label: 'macOS', match: /\.dmg$/i },
+    { label: 'Windows', match: /\.(msi|exe)$/i },
+    { label: 'Linux', match: /\.(AppImage|deb)$/i },
+  ];
+
+  /** A copy of a template's button, pointing at `href`, with its text set. */
+  const button = (template: HTMLTemplateElement, href: string, label: string) => {
+    const a = template.content.firstElementChild!.cloneNode(true) as HTMLAnchorElement;
+    a.href = href;
+    for (const n of [...a.childNodes]) if (n.nodeType === Node.TEXT_NODE) n.remove();
+    a.append(label);
+    return a;
+  };
+
+  interface Release {
+    tag_name: string;
+    html_url: string;
+    published_at?: string;
+    assets?: { name: string; browser_download_url: string }[];
+  }
+
+  if (box && osButton && allButton) {
+    fetch('https://api.github.com/repos/obscuredetour/magnitide/releases/latest', {
+      headers: { Accept: 'application/vnd.github+json' },
+    })
+      .then((r) => (r.ok ? (r.json() as Promise<Release>) : Promise.reject(new Error(r.statusText))))
+      .then((release) => {
+        const found = kinds.flatMap((k) => {
+          const asset = release.assets?.find((a) => k.match.test(a.name));
+          return asset ? [{ label: k.label, href: asset.browser_download_url }] : [];
+        });
+        if (!found.length) return;
+        const version = document.createElement('p');
+        version.className = 'w-full text-sm text-muted';
+        version.textContent = release.published_at
+          ? `${release.tag_name}, released ${new Date(release.published_at).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' })}`
+          : release.tag_name;
+        box.replaceChildren(
+          ...found.map((f) => button(osButton, f.href, f.label)),
+          button(allButton, release.html_url, 'All downloads'),
+          version,
+        );
+      })
+      .catch(() => {
+        // No release yet, rate-limited or offline: the Releases link stays.
+      });
+  }
+</script>

@@ -1,0 +1,73 @@
+---
+const repo = 'https://github.com/obscuredetour/magnitide';
+const docs = `${repo}/blob/main/docs`;
+
+interface Link {
+  href: string;
+  label: string;
+  note?: string;
+}
+
+const columns: { title: string; links: Link[] }[] = [
+  {
+    title: 'Docs',
+    links: [
+      {
+        href: `${docs}/architecture.md`,
+        label: 'Architecture',
+        note: 'how the pieces fit, and the decisions behind them',
+      },
+      { href: `${docs}/plugin-api.md`, label: 'Plugin API', note: 'the sandbox, the .mgp format, writing a plugin' },
+      { href: `${docs}/calibre-plugins.md`, label: 'calibre plugins', note: 'the three hosts and what each kind gets' },
+      { href: `${docs}/themes.md`, label: 'Themes', note: 'built-in and add-on theme files' },
+      { href: `${docs}/roadmap.md`, label: 'Roadmap', note: 'what’s done and what’s next' },
+    ],
+  },
+  {
+    title: 'Project',
+    links: [
+      { href: repo, label: 'Source on GitHub' },
+      { href: `${repo}/releases`, label: 'Releases' },
+      { href: `${repo}/issues`, label: 'Issues' },
+      { href: `${repo}/blob/main/LICENSE`, label: 'Licence (GPL-3.0-or-later)' },
+    ],
+  },
+  {
+    title: 'Plugins',
+    links: [
+      { href: 'plugins.html#native', label: 'Magnitide plugin API and SDK' },
+      { href: 'plugins.html#calibre', label: 'calibre plugin support' },
+      { href: `${repo}/tree/main/plugins/template`, label: 'Plugin template' },
+    ],
+  },
+];
+---
+
+<footer class="border-t border-line pt-10 pb-12 text-[0.9rem] text-muted">
+  <div class="container-site">
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,200px),1fr))] gap-6">
+      {columns.map((col) => (
+        <div>
+          <h3 class="mb-2.5 font-sans text-[0.8rem] tracking-[0.06em] text-muted uppercase">{col.title}</h3>
+          <ul class="space-y-1.5">
+            {col.links.map((l) => (
+              <li>
+                <a href={l.href}>{l.label}</a>
+                {l.note && `: ${l.note}`}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+    <div class="mt-8 flex flex-wrap justify-between gap-2 text-faint">
+      <span>
+        Magnitide is free software under the GPL-3.0-or-later. calibre is a trademark of Kovid Goyal; Magnitide is not
+        affiliated with calibre.
+      </span>
+      <span>
+        Icons by <a href="https://lucide.dev">Lucide</a>.
+      </span>
+    </div>
+  </div>
+</footer>
