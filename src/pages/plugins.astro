@@ -1,5 +1,5 @@
 ---
-import { BookOpen, FileCode, Puzzle } from '@lucide/astro';
+import { Blocks, BookOpen, FileCode, Package, Puzzle } from '@lucide/astro';
 import Button from '../components/Button.astro';
 import Hero from '../components/Hero.astro';
 import Pill from '../components/Pill.astro';
@@ -81,6 +81,17 @@ const shot = 'block h-auto w-full drop-shadow-[0_12px_32px_color-mix(in_srgb,var
     Magnitide plugins are sandboxed WebAssembly components written against Magnitide directly. calibre plugins run
     unchanged beside them, in a calibre or in Estuary, Magnitide's compatibility layer that runs them with no calibre at
     all.
+    <Fragment slot="after">
+      {/* To the two sections below, with the icons the app gives each kind. */}
+      <div class="mt-7 flex flex-wrap justify-center gap-3">
+        <Button variant="ghost" icon={Package} href="#native">
+          Magnitide plugins
+        </Button>
+        <Button variant="ghost" icon={Blocks} href="#calibre">
+          calibre plugins
+        </Button>
+      </div>
+    </Fragment>
   </Hero>
 
   {/* Settings › Plugins, both kinds side by side (taken by scripts/screenshots.py). */}
