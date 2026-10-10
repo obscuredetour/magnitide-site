@@ -1,7 +1,8 @@
 // The screenshot tour, run inside the app by scripts/screenshots.py: it's
 // copied to crates/app/ui/dev-hook.js (with __DEMO__ replaced by the demo
 // library's path) and loaded by `cargo tauri dev`'s page. It opens the demo
-// library, shows each view for HOLD ms in Light and then Dark, and puts
+// library, shows each view for HOLD ms in Light and then Dark (grid, list,
+// details, browse, edit, settings), and puts
 // everything back: the library, and every setting it touched (it restores
 // localStorage as it found it). A magenta slate fills the window at the start
 // and the end, so the capture knows which frames are the tour's.
@@ -21,6 +22,7 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const view = await import('/src/view.ts');
   const browse = await import('/src/browse.ts');
   const editor = await import('/src/editor.ts');
+  const { api } = await import('/src/api.ts');
   const { emit } = await import('@tauri-apps/api/event');
 
   for (let i = 0; i < 100 && !library.library(); i++) await wait(100);
@@ -58,15 +60,50 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   };
 
   await library.openLibrary(DEMO);
+  // The demo's EPUBs get the library's metadata, so the details panel doesn't
+  // offer to write it (demo-library.py sets it in the library only).
+  await api.writeAllMetadata();
+  await library.openLibrary(DEMO);
   await wait(500);
   view.setSidebarOpen(true);
   view.setViewMode('grid');
-  const book = library.items().find((b) => b.title === 'Pride and Prejudice') ?? library.items()[0];
+  const find = (title) => library.items().find((b) => b.title === title) ?? library.items()[0];
+  const book = find('Pride and Prejudice');
+  // A cover whose colour carries the details panel's blend in Light and Dark alike.
+  const vivid = find('The Count of Monte Cristo');
   await showSlate();
 
   for (const t of ['light', 'dark']) {
     theme.setTheme(t);
     theme.setAccent(null);
+
+    // The grid, beside the shelves.
+    view.setSidebarOpen(true);
+    view.setViewMode('grid');
+    library.setSelectedId(null);
+    library.setDetailsOpen(false);
+    await wait(300);
+    toTop();
+    await wait(HOLD);
+
+    // The list, the width of the window.
+    view.setSidebarOpen(false);
+    view.setViewMode('table');
+    await wait(300);
+    toTop();
+    await wait(HOLD);
+
+    // The details panel wide enough for two columns, its background blending toward the cover.
+    view.setViewMode('grid');
+    view.setDetailsWidth(640, false);
+    library.setSelectedId(vivid.id);
+    library.setDetailsOpen(true);
+    await wait(1000); // the cover's colours come from Rust
+    toTop();
+    document.querySelector(`[data-book-id="${vivid.id}"]`)?.scrollIntoView({ block: 'nearest' });
+    await wait(HOLD);
+    view.setDetailsWidth(Number(saved.detailsWidth) || view.DETAILS_WIDTH.initial, false);
+    view.setSidebarOpen(true);
 
     // Browse: the sidebar's other mode, three categories open, and every tag in the panel.
     library.setSelectedId(null);

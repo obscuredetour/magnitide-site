@@ -6,20 +6,43 @@ import Wave from './Wave.astro';
 
 const views = [
   {
+    id: 'grid',
+    label: 'Library',
+    alt: 'the library as a grid of covers, beside its shelves',
+    caption:
+      'Your books by their covers, at the size you like, beside your shelves: drag books onto one, or make a shelf for every series or author.',
+  },
+  {
+    id: 'list',
+    label: 'List',
+    alt: 'the library as a list',
+    caption: 'Or as a list, with the columns you choose, in the order and at the widths you set.',
+  },
+  {
+    id: 'details',
+    label: 'Details',
+    alt: 'a book’s details beside the grid, their background tinted by its cover',
+    caption:
+      'A book’s details beside the rest, in two columns when there’s room, the panel taking on its cover’s colours.',
+  },
+  {
     id: 'browse',
     label: 'Browse',
+    alt: 'the sidebar browsing by author, series and tag, with every tag open beside the grid',
     caption:
       'Browse by author, series, tag, publisher, format, language and more; open a category wide to see every value, merge the ones that are one thing spelt several ways, or let Tidy Up find them.',
   },
   {
     id: 'edit',
     label: 'Edit',
+    alt: 'the edit window, every field of a book in one place',
     caption:
       'Every field in one window, with autocomplete, a cover you can swap, and Find Metadata to fill the rest from Open Library, Google Books or a plugin.',
   },
   {
     id: 'settings',
     label: 'Settings',
+    alt: 'Settings, on the page for the library',
     caption:
       'The library you have open, what it holds on disk, and keeping your EPUB files’ own metadata matching the library.',
   },
@@ -29,7 +52,7 @@ const img = 'block h-auto w-full drop-shadow-[0_12px_32px_color-mix(in_srgb,var(
 
 <div data-shots>
   <div
-    class="mx-auto mb-5 flex w-fit gap-0.5 rounded-control bg-element p-0.75"
+    class="mx-auto mb-5 grid w-fit grid-cols-3 gap-0.5 rounded-control bg-element p-0.75 sm:flex"
     role="tablist"
     aria-label="Screenshots"
   >
@@ -58,7 +81,7 @@ const img = 'block h-auto w-full drop-shadow-[0_12px_32px_color-mix(in_srgb,var(
         <img
           class={`${img} dark:hidden`}
           src={`screenshots/light-${v.id}.webp`}
-          alt={`Magnitide’s ${v.id} view, in the Light theme`}
+          alt={`Magnitide: ${v.alt}, in the Light theme`}
           width="2200"
           height="1410"
           loading="lazy"
@@ -67,7 +90,7 @@ const img = 'block h-auto w-full drop-shadow-[0_12px_32px_color-mix(in_srgb,var(
         <img
           class={`${img} hidden dark:block`}
           src={`screenshots/dark-${v.id}.webp`}
-          alt={`Magnitide’s ${v.id} view, in the Dark theme`}
+          alt={`Magnitide: ${v.alt}, in the Dark theme`}
           width="2200"
           height="1410"
           loading="lazy"

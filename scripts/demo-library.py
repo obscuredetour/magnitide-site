@@ -8,14 +8,17 @@ their Standard Ebooks editions) as EPUBs, once, into
 <app>/target/demo-library/epubs, then makes a Magnitide library from them,
 "My Library", at /Users/Shared/My Library (afresh each time; screenshots show
 its path, so not one under your home folder), with the app's add_books
-example, and gives the books the titles, authors, series, years, tags,
-ratings and shelves in demo-books.json with its apply_metadata example. The
+example, and gives the books the titles, authors, series, tags, ratings and
+shelves in demo-books.json with its apply_metadata example, then the dates
+they were added and published (YYYY-MM-DD, or YYYY-MM or YYYY where that's
+all that's known). The
 EPUBs are under the app repo's target/, which git ignores. Standard Ebooks
 dedicates its editions to the public domain (CC0).
 """
 
 import json
 import shutil
+import sqlite3
 import subprocess
 import tempfile
 import sys
@@ -57,9 +60,23 @@ def main() -> None:
     subprocess.run([*example, 'add_books', '--', str(library), '--name', 'My Library', *files], cwd=app, check=True)
 
     with tempfile.NamedTemporaryFile('w', suffix='.json') as f:
-        json.dump(BOOKS, f)
+        # apply_metadata takes a year; the full date goes in below.
+        json.dump([{**b, 'published': int(str(b['published'])[:4])} for b in BOOKS], f)
         f.flush()
         subprocess.run([*example, 'apply_metadata', '--', str(library), f.name], cwd=app, check=True)
+
+    # What the core has no setter for, straight into the database: when each
+    # book was added (a minute apart, in the file's order, so books added the
+    # same day still sort), and publication dates more precise than a year.
+    db = sqlite3.connect(library / 'magnitide.db')
+    with db:
+        for i, b in enumerate(BOOKS):
+            added = f'{b["added"]}T09:{i:02}:00Z'
+            published = str(b['published'])
+            published += '-01-01'[len(published) - 4:] if len(published) < 10 else ''
+            db.execute('UPDATE books SET added_at = ?, modified_at = ?, published = ? WHERE title = ?',
+                       (added, added, published, b['title']))
+    db.close()
     print(library)
 
 

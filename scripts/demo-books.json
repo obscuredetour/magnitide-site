@@ -4,7 +4,7 @@
     "edition": "jane-austen/pride-and-prejudice",
     "title": "Pride and Prejudice",
     "authors": "Jane Austen",
-    "published": 1813,
+    "published": "1813-01-28",
     "added": "2026-03-02",
     "publisher": "Standard Ebooks",
     "tags": [
@@ -30,7 +30,7 @@
     "edition": "mary-shelley/frankenstein",
     "title": "Frankenstein; or, The Modern Prometheus",
     "authors": "Mary Shelley",
-    "published": 1818,
+    "published": "1818-01-01",
     "added": "2026-03-02",
     "publisher": "Standard Ebooks",
     "tags": [
@@ -54,7 +54,7 @@
     "edition": "herman-melville/moby-dick",
     "title": "Moby-Dick; or, The Whale",
     "authors": "Herman Melville",
-    "published": 1851,
+    "published": "1851-10-18",
     "added": "2026-03-04",
     "publisher": "Project Gutenberg",
     "tags": [
@@ -79,7 +79,7 @@
     "authors": "Jules Verne",
     "series": "Voyages extraordinaires",
     "seriesIndex": 4,
-    "published": 1865,
+    "published": "1865-09-14",
     "added": "2026-03-04",
     "publisher": "Standard Ebooks",
     "tags": [
@@ -107,7 +107,7 @@
     "authors": "Jules Verne",
     "series": "Voyages extraordinaires",
     "seriesIndex": 11,
-    "published": 1872,
+    "published": "1872-11-06",
     "added": "2026-03-04",
     "publisher": "Standard Ebooks",
     "tags": [
@@ -127,7 +127,7 @@
     "edition": "h-g-wells/the-war-of-the-worlds",
     "title": "The War of the Worlds",
     "authors": "H. G. Wells",
-    "published": 1898,
+    "published": "1897-04",
     "added": "2026-03-10",
     "publisher": "Project Gutenberg",
     "tags": [
@@ -150,7 +150,7 @@
     "edition": "h-g-wells/the-time-machine",
     "title": "The Time Machine",
     "authors": "H. G. Wells",
-    "published": 1895,
+    "published": "1895-05-07",
     "added": "2026-03-10",
     "publisher": "Project Gutenberg",
     "tags": [
@@ -174,7 +174,7 @@
     "authors": "Arthur Conan Doyle",
     "series": "Sherlock Holmes",
     "seriesIndex": 1,
-    "published": 1887,
+    "published": "1887-11",
     "added": "2026-04-01",
     "publisher": "Standard Ebooks",
     "tags": [
@@ -202,7 +202,7 @@
     "authors": "Arthur Conan Doyle",
     "series": "Sherlock Holmes",
     "seriesIndex": 5,
-    "published": 1902,
+    "published": "1902-03-25",
     "added": "2026-04-01",
     "publisher": "Standard Ebooks",
     "tags": [
@@ -225,7 +225,7 @@
     "edition": "charlotte-bronte/jane-eyre",
     "title": "Jane Eyre",
     "authors": "Charlotte Brontë",
-    "published": 1847,
+    "published": "1847-10-19",
     "added": "2026-04-12",
     "publisher": "Project Gutenberg",
     "tags": [
@@ -247,7 +247,7 @@
     "edition": "leo-tolstoy/anna-karenina/constance-garnett",
     "title": "Anna Karenina",
     "authors": "Leo Tolstoy",
-    "published": 1878,
+    "published": "1875-01",
     "added": "2026-05-03",
     "publisher": "Standard Ebooks",
     "tags": [
@@ -270,7 +270,7 @@
     "edition": "fyodor-dostoevsky/crime-and-punishment/constance-garnett",
     "title": "Crime and Punishment",
     "authors": "Fyodor Dostoevsky",
-    "published": 1866,
+    "published": "1866-01",
     "added": "2026-05-03",
     "publisher": "Standard Ebooks",
     "tags": [
@@ -293,7 +293,7 @@
     "edition": "oscar-wilde/the-picture-of-dorian-gray",
     "title": "The Picture of Dorian Gray",
     "authors": "Oscar Wilde",
-    "published": 1890,
+    "published": "1890-06-20",
     "added": "2026-05-20",
     "publisher": "Project Gutenberg",
     "tags": [
@@ -317,7 +317,7 @@
     "edition": "lewis-carroll/alices-adventures-in-wonderland/john-tenniel",
     "title": "Alice’s Adventures in Wonderland",
     "authors": "Lewis Carroll",
-    "published": 1865,
+    "published": "1865-11",
     "added": "2026-05-20",
     "publisher": "Standard Ebooks",
     "tags": [
@@ -338,7 +338,7 @@
     "edition": "bram-stoker/dracula",
     "title": "Dracula",
     "authors": "Bram Stoker",
-    "published": 1897,
+    "published": "1897-05",
     "added": "2026-06-08",
     "publisher": "Project Gutenberg",
     "tags": [
@@ -360,7 +360,7 @@
     "edition": "mark-twain/the-adventures-of-huckleberry-finn",
     "title": "Adventures of Huckleberry Finn",
     "authors": "Mark Twain",
-    "published": 1884,
+    "published": "1884-12-10",
     "added": "2026-06-08",
     "publisher": "Standard Ebooks",
     "tags": [
@@ -381,7 +381,7 @@
     "edition": "virginia-woolf/mrs-dalloway",
     "title": "Mrs Dalloway",
     "authors": "Virginia Woolf",
-    "published": 1925,
+    "published": "1925-05-14",
     "added": "2026-07-14",
     "publisher": "Standard Ebooks",
     "tags": [
@@ -404,7 +404,7 @@
     "edition": "alexandre-dumas/the-count-of-monte-cristo/chapman-and-hall",
     "title": "The Count of Monte Cristo",
     "authors": "Alexandre Dumas",
-    "published": 1844,
+    "published": "1844-08-28",
     "added": "2026-07-14",
     "publisher": "Standard Ebooks",
     "tags": [
