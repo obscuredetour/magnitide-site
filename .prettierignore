@@ -1,0 +1,6 @@
+dist/
+app/
+.astro/
+pnpm-lock.yaml
+public/
+scripts/

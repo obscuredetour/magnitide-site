@@ -1,0 +1,30 @@
+---
+import type { AstroComponent } from '@lucide/astro';
+import Icon from './Icon.astro';
+
+// The top of a page: a small label, the headline, and a lede (the default
+// slot). The `after` slot holds anything under the lede, such as buttons.
+interface Props {
+  eyebrow: string;
+  eyebrowIcon: AstroComponent;
+  title: string;
+  /** No space below, for a page whose first section follows straight on. */
+  flush?: boolean;
+}
+
+const { eyebrow, eyebrowIcon, title, flush = false } = Astro.props;
+---
+
+<section class:list={['pt-[clamp(40px,8vw,96px)] text-center', { 'pb-[clamp(28px,4vw,48px)]': !flush }]}>
+  <div class="container-site">
+    <span class="mb-5 inline-flex items-center gap-1.5 rounded-chip bg-highlight px-3 py-1 text-[0.8rem] font-semibold text-accent">
+      <Icon of={eyebrowIcon} size={14} />
+      {eyebrow}
+    </span>
+    <h1 class="mx-auto max-w-[25ch] text-[clamp(2rem,4.2vw,3.25rem)]/[1.1]">{title}</h1>
+    <p class="mx-auto mt-5 max-w-[56ch] text-[clamp(1rem,1.6vw,1.25rem)] text-muted">
+      <slot />
+    </p>
+    <slot name="after" />
+  </div>
+</section>

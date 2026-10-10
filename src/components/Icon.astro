@@ -1,0 +1,16 @@
+---
+import type { AstroComponent } from '@lucide/astro';
+
+// A Lucide icon (https://lucide.dev) at the site's sizes, with the same stroke
+// at every size, as the app's Icon.tsx. Colour comes from the text colour.
+interface Props {
+  of: AstroComponent;
+  /** Pixels: 14 inline, 16 on buttons, 20 in a card's glyph. */
+  size?: 12 | 14 | 16 | 20;
+  class?: string;
+}
+
+const { of: Of, size = 16, class: className } = Astro.props;
+---
+
+<Of size={size} stroke-width={1.75} nonScalingStroke class:list={['flex-none', className]} aria-hidden="true" />

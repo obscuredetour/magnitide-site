@@ -1,0 +1,61 @@
+---
+import '../styles/global.css';
+import icon from '@app-icons/icon.png';
+import iconSmall from '@app-icons/128x128@2x.png';
+import Footer from '../components/Footer.astro';
+import Nav from '../components/Nav.astro';
+import { ACCENTS_KEY, THEME_KEY, THEMES } from '../themes';
+
+// Every page: the head, the nav, the page's content, the footer.
+interface Props {
+  title: string;
+  description: string;
+  /** For link previews; the title and description when not given. */
+  ogTitle?: string;
+  ogDescription?: string;
+  current?: 'plugins';
+}
+
+const { title, description, ogTitle = title, ogDescription = description, current } = Astro.props;
+const appearances = Object.fromEntries(THEMES.map((t) => [t.id, t.appearance]));
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={ogTitle} />
+    <meta property="og:description" content={ogDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={new URL(Astro.url.pathname, Astro.site)} />
+    <meta property="og:image" content={new URL(icon.src, Astro.site)} />
+    <link rel="icon" href={iconSmall.src} />
+    <link rel="apple-touch-icon" href={iconSmall.src} />
+    <script is:inline define:vars={{ appearances, THEME_KEY, ACCENTS_KEY }}>
+      // Applies the stored theme before paint, so the page never flashes the
+      // wrong one. ThemeMenu.astro does the same and keeps it current.
+      try {
+        let t = localStorage.getItem(THEME_KEY) || 'system';
+        if (!appearances[t]) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        const root = document.documentElement;
+        root.dataset.theme = t;
+        root.dataset.appearance = appearances[t];
+        const a = JSON.parse(localStorage.getItem(ACCENTS_KEY) || '{}')[t];
+        if (a && /^[a-z][a-z0-9-]*$/.test(a)) {
+          root.dataset.accent = a;
+          root.style.setProperty('--accent', `var(--${a})`);
+        }
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <Nav current={current} />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

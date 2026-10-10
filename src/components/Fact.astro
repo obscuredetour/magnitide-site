@@ -1,0 +1,22 @@
+---
+import Wave from './Wave.astro';
+
+// One of the "built to be trusted" facts: the mark's wave, a bold line, a
+// sentence, and maybe a big number above. The wave is the mark's at its own
+// proportions, as the hero's is stretched across the page.
+interface Props {
+  title: string;
+  figure?: string;
+}
+
+const { title, figure } = Astro.props;
+---
+
+<div>
+  <Wave class="mb-4 aspect-[54/23.63] w-11 overflow-visible" width={3} draw />
+  {figure && <span class="mb-1 block font-display text-[2rem]/[1.1] font-semibold">{figure}</span>}
+  <b class="block font-display text-lg font-semibold">{title}</b>
+  <span class="text-[0.95rem] text-muted">
+    <slot />
+  </span>
+</div>

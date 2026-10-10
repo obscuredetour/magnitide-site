@@ -1,0 +1,21 @@
+---
+// A small rounded label: `ok` for what works, `experimental` for what's on its way.
+interface Props {
+  tone?: 'ok' | 'experimental';
+}
+
+const { tone } = Astro.props;
+---
+
+<span
+  class:list={[
+    'rounded-chip px-2.5 py-0.5 text-[0.8rem]',
+    {
+      'bg-element text-muted': !tone,
+      'bg-success/15 text-success': tone === 'ok',
+      'bg-warning/18 text-[color-mix(in_srgb,var(--warning)_70%,var(--fg))]': tone === 'experimental',
+    },
+  ]}
+>
+  <slot />
+</span>

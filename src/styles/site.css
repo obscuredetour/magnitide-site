@@ -1,0 +1,136 @@
+/* Tailwind and the site's design on it. global.css adds the app's themes,
+   which the colours here refer to. (Kept apart so Prettier's Tailwind plugin
+   can read this without the app checkout.) */
+@import 'tailwindcss';
+
+/* `dark:` follows the chosen theme's appearance, not the system's. */
+@custom-variant dark (&:where([data-appearance='dark'], [data-appearance='dark'] *));
+
+/* The same theme as the app's styles.css, so class names mean the same thing
+   in both: only theme colours exist (bg-panel, text-muted, border-line…). */
+@theme {
+  --color-*: initial;
+  --color-white: #fff;
+  --color-black: #000;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
+  /* Headings and the wordmark: Cabin, the brandmark's face (self-hosted, global.css). */
+  --font-display:
+    'Cabin Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  --animate-menu-in: menu-in 0.12s ease-out;
+
+  @keyframes menu-in {
+    from {
+      transform: translateY(-4px);
+      opacity: 0;
+    }
+  }
+}
+
+/* `inline` makes utilities reference the theme variables directly, so they
+   change at runtime when data-theme changes. */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-popover: var(--popover);
+  --color-element: var(--element);
+  --color-element-hover: var(--element-hover);
+  --color-fg: var(--fg);
+  --color-muted: var(--fg-muted);
+  --color-faint: var(--fg-faint);
+  --color-link: var(--link);
+  --color-line: var(--border);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-hover: var(--hover);
+  --color-highlight: var(--highlight);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-shadow: var(--shadow);
+  --radius-inset: var(--inset-radius);
+  --radius-control: var(--control-radius);
+  --radius-card: var(--card-radius);
+  --radius-menu: var(--menu-radius);
+  --radius-chip: var(--chip-radius);
+  --shadow-card: var(--card-shadow);
+  --shadow-lift: var(--lift-shadow);
+}
+
+/* The page's content width, with a gutter either side. */
+@utility container-site {
+  width: min(70rem, 100% - 2rem);
+  margin-inline: auto;
+  @variant md {
+    width: min(70rem, 100% - 4rem);
+  }
+}
+
+@layer base {
+  :root {
+    accent-color: var(--accent);
+    caret-color: var(--caret);
+  }
+  html {
+    @apply scroll-smooth bg-bg;
+  }
+  body {
+    @apply min-h-screen overflow-x-hidden bg-bg font-sans text-base/[1.55] text-fg antialiased;
+  }
+  ::selection {
+    background: var(--text-selection);
+  }
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+  a {
+    @apply text-link hover:underline;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display font-semibold tracking-[-0.01em] text-balance;
+  }
+  code {
+    @apply rounded-inset bg-element px-[0.35em] py-[0.1em] font-mono text-[0.875em];
+  }
+  pre {
+    @apply overflow-x-auto rounded-card border border-line bg-panel px-4 py-3.5 font-mono text-sm/normal text-fg;
+  }
+  pre code {
+    @apply bg-transparent p-0 text-[length:inherit];
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* Running text with headings, lists and code: the plugins page's longer
+   sections. Everything else is styled with utilities where it's used. */
+@utility prose-site {
+  @apply max-w-[68ch] text-muted;
+  & > * + * {
+    @apply mt-3;
+  }
+  & h3 {
+    @apply mt-7 mb-2.5 text-xl text-fg;
+  }
+  & ul {
+    @apply list-disc pl-5;
+  }
+  & li + li {
+    @apply mt-1.5;
+  }
+  & strong {
+    @apply font-semibold text-fg;
+  }
+}

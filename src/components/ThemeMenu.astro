@@ -1,0 +1,221 @@
+---
+import { Check, Contrast } from '@lucide/astro';
+import { THEMES } from '../themes';
+import Icon from './Icon.astro';
+
+// The theme menu in the nav: every theme the app has, and the chosen theme's
+// accents. All of it is rendered here; the script below only marks what's
+// chosen, shows the current theme's accents, and stores choices.
+
+const item =
+  'group grid h-7.5 w-full cursor-default grid-cols-[14px_20px_1fr] items-center gap-2 rounded-control px-2.5 text-left whitespace-nowrap hover:bg-highlight hover:text-accent';
+const label = 'px-2.5 pt-1.5 pb-1 text-[11px] font-semibold tracking-[0.06em] text-muted uppercase';
+const accent = 'group grid size-6 cursor-pointer place-items-center rounded-full';
+// The chosen accent's dot gets a small mark in the middle.
+const dot =
+  'grid size-5 place-items-center rounded-full after:hidden after:size-2 after:rounded-full after:bg-[color-mix(in_srgb,var(--on-accent)_85%,var(--fg))] group-aria-checked:after:block';
+---
+
+<div class="relative" data-theme-menu>
+  <button
+    type="button"
+    class="grid size-8.5 cursor-pointer place-items-center rounded-control text-muted hover:bg-hover hover:text-fg aria-expanded:bg-hover aria-expanded:text-fg"
+    title="Theme"
+    aria-label="Theme"
+    aria-haspopup="menu"
+    aria-expanded="false"
+    data-trigger
+  >
+    <Icon of={Contrast} />
+  </button>
+
+  <div
+    role="menu"
+    aria-label="Theme"
+    hidden
+    class="absolute top-full right-0 z-50 mt-1 min-w-58 animate-menu-in rounded-menu border border-line bg-popover p-1.5 text-left text-sm/[1.4] text-fg shadow-lift select-none"
+    data-panel
+  >
+    <div class={label}>Theme</div>
+    <button type="button" role="menuitemradio" aria-checked="false" class={item} data-choice="system">
+      <Icon of={Check} size={14} class="invisible group-aria-checked:visible" />
+      <span class="relative block size-5 overflow-hidden rounded-full border border-line" aria-hidden="true">
+        <span class="absolute inset-y-0 left-0 w-1/2 bg-bg" data-theme="light" data-appearance="light"></span>
+        <span class="absolute inset-y-0 right-0 w-1/2 bg-bg" data-theme="dark" data-appearance="dark"></span>
+      </span>
+      Match System
+    </button>
+    {THEMES.map((t) => (
+      <button type="button" role="menuitemradio" aria-checked="false" class={item} data-choice={t.id}>
+        <Icon of={Check} size={14} class="invisible group-aria-checked:visible" />
+        {/* The theme's own colours, by scoping data-theme to the swatch (the app's trick). */}
+        <span
+          class="relative block size-5 overflow-hidden rounded-full border border-line bg-bg"
+          data-theme={t.id}
+          data-appearance={t.appearance}
+          aria-hidden="true"
+        >
+          <span class="absolute inset-y-0 right-0 w-1/2 bg-element" />
+          <span class="absolute right-0.75 bottom-0.75 size-2 rounded-full bg-accent" />
+        </span>
+        {t.label}
+      </button>
+    ))}
+
+    <div class="my-1.5 border-t border-line"></div>
+    <div class={label}>Accent</div>
+    {THEMES.map((t) => {
+      const own = t.accents.find((a) => a.name === t.own);
+      return (
+        <div
+          role="group"
+          aria-label="Accent colour"
+          class="flex max-w-61 flex-wrap gap-1.5 px-2 pt-0.5 pb-1.5"
+          data-accents-for={t.id}
+          hidden
+        >
+          <button
+            type="button"
+            role="menuitemradio"
+            aria-checked="false"
+            class={accent}
+            title={own ? `${own.label} (the theme’s own)` : 'The theme’s own'}
+            aria-label={own ? `${own.label}, the theme’s own accent` : 'The theme’s own accent'}
+            data-accent=""
+          >
+            {/* Scoped like the swatches, so it shows the theme's own accent whatever is chosen. */}
+            <span class={`${dot} bg-accent`} data-theme={t.id} data-appearance={t.appearance} />
+          </button>
+          {t.accents
+            .filter((a) => a.name !== t.own)
+            .map((a) => (
+              <button
+                type="button"
+                role="menuitemradio"
+                aria-checked="false"
+                class={accent}
+                title={a.label}
+                aria-label={a.label}
+                data-accent={a.name}
+              >
+                <span class={dot} style={`background: var(--${a.name})`} />
+              </button>
+            ))}
+        </div>
+      );
+    })}
+  </div>
+</div>
+
+<script>
+  import { ACCENTS_KEY, THEME_KEY, THEMES } from '../themes';
+
+  // The same choice the inline script in Base.astro applies before paint;
+  // this keeps it current and lets the menu change it.
+  const root = document.documentElement;
+  const systemDark = matchMedia('(prefers-color-scheme: dark)');
+
+  const read = (key: string) => {
+    try {
+      return localStorage.getItem(key);
+    } catch {
+      return null;
+    }
+  };
+  const write = (key: string, value: string) => {
+    try {
+      localStorage.setItem(key, value);
+    } catch {
+      // Private mode or blocked storage: the choice just doesn't persist.
+    }
+  };
+
+  // 'system', or a theme's id; anything else (a theme since removed) is 'system'.
+  let choice = read(THEME_KEY) ?? 'system';
+  if (!THEMES.some((t) => t.id === choice)) choice = 'system';
+  let accents: Record<string, string> = {};
+  try {
+    accents = JSON.parse(read(ACCENTS_KEY) ?? '{}') ?? {};
+  } catch {}
+
+  const current = () =>
+    THEMES.find((t) => t.id === choice) ?? THEMES.find((t) => t.id === (systemDark.matches ? 'dark' : 'light'))!;
+  /** The current theme's chosen accent, or null for its own. */
+  const currentAccent = () => {
+    const t = current();
+    const a = accents[t.id];
+    return a && a !== t.own && t.accents.some((x) => x.name === a) ? a : null;
+  };
+
+  function apply() {
+    const t = current();
+    const a = currentAccent();
+    root.dataset.theme = t.id;
+    root.dataset.appearance = t.appearance;
+    if (a) {
+      root.dataset.accent = a;
+      root.style.setProperty('--accent', `var(--${a})`);
+    } else {
+      delete root.dataset.accent;
+      root.style.removeProperty('--accent');
+    }
+    for (const menu of document.querySelectorAll<HTMLElement>('[data-theme-menu]')) {
+      for (const b of menu.querySelectorAll<HTMLElement>('[data-choice]')) {
+        b.setAttribute('aria-checked', String(b.dataset.choice === choice));
+      }
+      for (const group of menu.querySelectorAll<HTMLElement>('[data-accents-for]')) {
+        group.hidden = group.dataset.accentsFor !== t.id;
+      }
+      for (const b of menu.querySelectorAll<HTMLElement>(`[data-accents-for="${t.id}"] [data-accent]`)) {
+        b.setAttribute('aria-checked', String(b.dataset.accent === (a ?? '')));
+      }
+    }
+  }
+
+  systemDark.addEventListener('change', apply);
+  apply();
+
+  for (const menu of document.querySelectorAll<HTMLElement>('[data-theme-menu]')) {
+    const trigger = menu.querySelector<HTMLElement>('[data-trigger]')!;
+    const panel = menu.querySelector<HTMLElement>('[data-panel]')!;
+
+    const close = () => {
+      panel.hidden = true;
+      trigger.setAttribute('aria-expanded', 'false');
+      document.removeEventListener('pointerdown', onOutside, true);
+      document.removeEventListener('keydown', onKey, true);
+    };
+    const onOutside = (e: Event) => {
+      if (!menu.contains(e.target as Node)) close();
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      e.stopPropagation();
+      close();
+      trigger.focus();
+    };
+
+    trigger.addEventListener('click', () => {
+      if (!panel.hidden) return close();
+      panel.hidden = false;
+      trigger.setAttribute('aria-expanded', 'true');
+      document.addEventListener('pointerdown', onOutside, true);
+      document.addEventListener('keydown', onKey, true);
+    });
+
+    panel.addEventListener('click', (e) => {
+      const b = (e.target as Element).closest<HTMLElement>('[data-choice], [data-accent]');
+      if (!b) return;
+      if (b.dataset.choice !== undefined) {
+        choice = b.dataset.choice;
+        write(THEME_KEY, choice);
+      } else {
+        const t = current();
+        if (b.dataset.accent) accents[t.id] = b.dataset.accent;
+        else delete accents[t.id];
+        write(ACCENTS_KEY, JSON.stringify(accents));
+      }
+      apply();
+    });
+  }
+</script>

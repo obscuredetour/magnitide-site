@@ -1,0 +1,75 @@
+---
+// The wave over the mark's four slabs (Mark.tsx in the app): one sine cycle,
+// rising first, its crest a quarter of the way along and its trough three
+// quarters. In the mark it's y = 11.815 − 10.615·sin(2πx/54) across a 54-wide
+// box; here it's stretched to whatever box it's given, with an even line, in
+// the accent colour.
+interface Props {
+  class?: string;
+  /** Line width in pixels. */
+  width?: number;
+  /** Draw the line in, left to right, when it scrolls into view (the script below). */
+  draw?: boolean;
+}
+
+const { class: className, width = 5, draw = false } = Astro.props;
+
+// The mark's wave, sampled finely enough to be smooth at any size.
+const steps = 216;
+const points = Array.from({ length: steps + 1 }, (_, i) => {
+  const x = (54 * i) / steps;
+  const y = 11.815 - 10.615 * Math.sin((2 * Math.PI * x) / 54);
+  return `${x.toFixed(3)} ${y.toFixed(3)}`;
+});
+---
+
+<svg
+  class:list={[
+    'pointer-events-none text-accent',
+    // Revealed by a clip (the line always runs rightward, so it reads as being drawn); the
+    // margin keeps the round ends. Hidden at once while waiting; only the reveal is animated.
+    draw &&
+      'transition-[clip-path] duration-700 ease-in-out [clip-path:inset(-8px)] data-[draw=waiting]:transition-none data-[draw=waiting]:[clip-path:inset(-8px_calc(100%_+_8px)_-8px_-8px)]',
+    className,
+  ]}
+  data-draw={draw ? '' : undefined}
+  viewBox="0 0 54 23.63"
+  preserveAspectRatio="none"
+  fill="none"
+  aria-hidden="true"
+>
+  <path
+    d={`M${points.join(' L')}`}
+    stroke="currentColor"
+    stroke-width={width}
+    stroke-linecap="round"
+    vector-effect="non-scaling-stroke"
+  ></path>
+</svg>
+
+<script>
+  // Waves with `draw` wait, undrawn, until they scroll into view, then draw in; those that come
+  // into view together draw one after another. Waves already on screen when the page loads stay
+  // as they are, so nothing flickers, and with reduced motion none of them move.
+  const waves = [...document.querySelectorAll<SVGElement>('[data-draw]')];
+  if (waves.length && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries
+          .filter((e) => e.isIntersecting)
+          .forEach((e, i) => {
+            const wave = e.target as SVGElement;
+            wave.style.transitionDelay = `${i * 90}ms`;
+            wave.dataset.draw = 'drawn';
+            observer.unobserve(wave);
+          });
+      },
+      { rootMargin: '0px 0px -12% 0px' },
+    );
+    for (const wave of waves) {
+      if (wave.getBoundingClientRect().top < innerHeight) continue;
+      wave.dataset.draw = 'waiting';
+      observer.observe(wave);
+    }
+  }
+</script>

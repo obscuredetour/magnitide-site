@@ -28,7 +28,15 @@ jobs:
           ref: main
           path: app
           token: ${{ secrets.APP_REPO_TOKEN || github.token }}
-      - run: ./build.sh app
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+        env:
+          MAGNITIDE_APP: app
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

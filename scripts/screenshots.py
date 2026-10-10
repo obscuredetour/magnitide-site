@@ -11,8 +11,8 @@ It installs scripts/screenshots/tour.js as the app's dev hook, which makes the
 watcher relaunch the app; the tour then shows each view in turn while this
 captures the window, and puts the app back as it was. Frames that hold still
 between the tour's two magenta slates are the shots, written to
-screenshots/<theme>-<view>.webp (browse, edit, settings). Keep the window in front and uncovered while
-it runs (about a minute): macOS stops drawing a covered window.
+public/screenshots/<theme>-<view>.webp (SHOTS, below). Keep the window in front and uncovered while
+it runs (about two minutes): macOS stops drawing a covered window.
 """
 
 import glob
@@ -26,7 +26,7 @@ import time
 from pathlib import Path
 
 SITE = Path(__file__).resolve().parent.parent
-SHOTS = [f'{t}-{v}' for t in ('light', 'dark') for v in ('browse', 'edit', 'settings')]
+SHOTS = [f'{t}-{v}' for t in ('light', 'dark') for v in ('grid', 'list', 'details', 'browse', 'edit', 'settings')]
 HOOK_TAG = '  <script type="module" src="/dev-hook.js"></script>\n'
 TOUR_KEY = 'screenshotTourSaved'  # tour.js's snapshot of the app's settings, there while it runs
 
@@ -141,7 +141,7 @@ def main() -> None:
         # Between the slates, runs of identical frames (1.5 s or more) are the shots, in order.
         marks = [i for i, (_, slate) in enumerate(frames) if slate]
         if not marks:
-            debug = SITE / 'screenshots' / 'unsorted'
+            debug = SITE / 'public/screenshots' / 'unsorted'
             debug.mkdir(parents=True, exist_ok=True)
             for frame, _ in frames[:: max(1, len(frames) // 12)]:
                 shutil.copy(frame, debug / frame.name)
@@ -156,7 +156,7 @@ def main() -> None:
             else:
                 runs.append((digest, [frame]))
         shots = [frames for _, frames in runs if len(frames) >= 3]
-        out = SITE / 'screenshots'
+        out = SITE / 'public/screenshots'
         out.mkdir(exist_ok=True)
         if len(shots) != len(SHOTS):
             keep = out / 'unsorted'

@@ -1,0 +1,30 @@
+---
+// A page section: a heading, an optional lede (the `lede` slot), and the
+// content. Sections that follow one another are divided by a rule.
+interface Props {
+  id?: string;
+  title: string;
+  center?: boolean;
+  class?: string;
+}
+
+const { id, title, center = false, class: className } = Astro.props;
+---
+
+<section
+  id={id}
+  data-section
+  class:list={['border-line py-[clamp(48px,7vw,88px)] [[data-section]+&]:border-t', className]}
+>
+  <div class="container-site">
+    <div class:list={['mb-9 max-w-[62ch]', { 'mx-auto text-center': center }]}>
+      <h2 class="text-[clamp(1.6rem,3vw,2.25rem)]/[1.15]">{title}</h2>
+      {Astro.slots.has('lede') && (
+        <p class="mt-3 text-[1.05rem] text-muted">
+          <slot name="lede" />
+        </p>
+      )}
+    </div>
+    <slot />
+  </div>
+</section>
